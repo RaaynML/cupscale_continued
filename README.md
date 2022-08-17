@@ -4,13 +4,13 @@ Image Upscaling GUI based on ESRGAN
 ![](https://i.imgur.com/ntIuSrv.png)
 
 ## Why fork?
-Cupscale hasn't been updated for almost 1 year at the time of forking, but still has a lot of unexpected behavior/interface bugs that
+Cupscale hasn't been updated for ~1 year at the time of forking, but still has a lot of unexpected behavior/interface bugs that
 that don't really make it unusable but do make it a bit annoying to deal with for daily use. I probably won't fix many backend issues
 (outside of the RTX 3060 CUDA detection bug) but things like Cupscale throwing when a preview image isn't available even
 when switching to a different tab, would be worked on.
 
 This fork will be dormant while I study the repo to ensure I understand what's going on before I change things around and break stuff.
-It's also more of a personal use fork so I won't make any garuntees on the extent to which I put energy into fixing non-breaking bugs.
+It's also more of a personal use fork so I won't make any guarantees on the extent to which I fix non-usability-breaking bugs.
 
 ## Credits:
 
