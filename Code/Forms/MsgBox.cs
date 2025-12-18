@@ -38,15 +38,15 @@ namespace Cupscale.Forms
         private void msgTextbox_TextChanged(object sender, EventArgs e)
         {
             int linebreaks = Regex.Split(msgTextbox.Text, "\r\n|\r|\n").Length;
-            if (linebreaks > 6)
+            if(linebreaks > 6)
                 msgTextbox.ScrollBars = ScrollBars.Vertical;
             else
                 msgTextbox.ScrollBars = ScrollBars.None;
 
-            if (linebreaks > 10)
+            if(linebreaks > 10)
                 Size = new Size(Size.Width, 450);
 
-            if (msgTextbox.Text.Contains("Stack Trace"))
+            if(msgTextbox.Text.Contains("Stack Trace"))
                 msgTextbox.TextAlign = HorizontalAlignment.Left;
             else
                 msgTextbox.TextAlign = HorizontalAlignment.Center;
@@ -54,7 +54,7 @@ namespace Cupscale.Forms
 
         private void MsgBox_FormClosing(object sender, FormClosingEventArgs e)
         {
-            if (!usedConfirmBtn)
+            if(!usedConfirmBtn)
             {
                 DialogResult = DialogResult.OK;
                 DialogQueue.CloseCurrent();

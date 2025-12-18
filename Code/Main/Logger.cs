@@ -15,32 +15,32 @@ namespace Cupscale
 
 		public static string file;
 
-		public static bool disable;
+		//public static bool disable;
 
 		public static bool doLogIo;
 		public static bool doLogStatus;
 
-		public static void Init ()
-        {
+		public static void Init()
+		{
 			file = Path.Combine(Paths.GetDataPath(), "sessionlog.txt");
 			doLogIo = Config.GetBool("logIo");
 			doLogStatus = Config.GetBool("logStatus");
 			PrintArgs();
 		}
 
-		public static void PrintArgs ()
-        {
+		public static void PrintArgs()
+		{
 			foreach (string arg in Environment.GetCommandLineArgs())
 				Log("Arg: " + arg);
 		}
 
 		public static void Log(string s, bool logToFile = true, bool noLineBreak = false, bool replaceLastLine = false)
 		{
-			if (disable) return;
+			//if(disable) return;
 
 			Console.WriteLine(s);
 
-			if (replaceLastLine)
+			if(replaceLastLine)
 			{
 				textbox.Text = textbox.Text.Remove(textbox.Text.LastIndexOf(Environment.NewLine));
 				sessionLog = sessionLog.Remove(sessionLog.LastIndexOf(Environment.NewLine));
@@ -51,36 +51,36 @@ namespace Cupscale
 			else
 				sessionLog += " " + s;
 
-			if (logToFile)
+			if(logToFile)
 				LogToFile(s, noLineBreak);
 		}
 
 		public static void LogToFile(string s, bool noLineBreak)
-        {
-			if (string.IsNullOrWhiteSpace(file))
+		{
+			if(string.IsNullOrWhiteSpace(file))
 				file = Path.Combine(Paths.GetDataPath(), "sessionlog.txt");
 			string time = DT.Now.Month + "-" + DT.Now.Day + "-" + DT.Now.Year + " " + DT.Now.Hour + ":" + DT.Now.Minute + ":" + DT.Now.Second;
 
-            try
-            {
-				if (!noLineBreak)
+			try
+			{
+				if(!noLineBreak)
 					File.AppendAllText(file, Environment.NewLine + time + ": " + s);
 				else
 					File.AppendAllText(file, " " + s);
 			}
-            catch
-            {
+			catch
+			{
 				// idk how to deal with this race condition (?) but just ignoring it seems to work lol
-            }
+			}
 		}
 
-		public static string GetSessionLog ()
-        {
+		public static string GetSessionLog()
+		{
 			return sessionLog;
-        }
+		}
 
 		public static MsgBox ErrorMessage (string msg, Exception e)
-        {
+		{
 			string text = $"{msg}\n\n{e.Message}\n\nStack Trace:\n{e.StackTrace}";
 			Clipboard.SetText(text);
 			Log(text);

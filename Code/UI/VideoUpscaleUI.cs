@@ -37,7 +37,7 @@ namespace Cupscale.UI
 
         public static void LoadFile(string path)
         {
-            if (!IoUtils.videoExtensions.Contains(Path.GetExtension(path).ToLower()))
+            if(!IoUtils.videoExtensions.Contains(Path.GetExtension(path).ToLower()))
             {
                 Program.ShowMessage("Not a supported video file!");
                 return;
@@ -54,7 +54,7 @@ namespace Cupscale.UI
         {
             Program.mainForm.SetButtonText("Upscale Video");
 
-            if (string.IsNullOrWhiteSpace(currentInPath))
+            if(string.IsNullOrWhiteSpace(currentInPath))
                 return;
 
             titleLabel.Text = "Loaded " + currentInPath.Wrap();
@@ -65,7 +65,7 @@ namespace Cupscale.UI
             logBox.Clear();
             Print("Starting upscale of " + Path.GetFileName(currentInPath));
 
-            if (string.IsNullOrWhiteSpace(currentInPath) || !File.Exists(currentInPath))
+            if(string.IsNullOrWhiteSpace(currentInPath) || !File.Exists(currentInPath))
             {
                 Program.ShowMessage("No valid file loaded.", "Error");
                 return;
@@ -105,7 +105,7 @@ namespace Cupscale.UI
 
         static async Task PreprocessIfNeeded(bool doPreprocess)
         {
-            if (doPreprocess)   // Skip if target scale is 100%
+            if(doPreprocess)   // Skip if target scale is 100%
             {
                 Print("Preprocessing frames...");
                 await Task.Delay(10);
@@ -120,7 +120,7 @@ namespace Cupscale.UI
 
         static async Task PostprocessIfNeeded()
         {
-            if (!(ImageProcessing.postScaleMode == Upscale.ScaleMode.Percent && ImageProcessing.postScaleValue == 100))   // Skip if target scale is 100%
+            if(!(ImageProcessing.postScaleMode == Upscale.ScaleMode.Percent && ImageProcessing.postScaleValue == 100))   // Skip if target scale is 100%
             {
                 Print("Post-Resizing is enabled - Postprocessing frames...");
                 await Task.Delay(10);
@@ -138,26 +138,26 @@ namespace Cupscale.UI
 
         static async Task CreateVideo()
         {
-            if (IoUtils.GetAmountOfFiles(Paths.framesOutPath, false) < 1) return;
+            if(IoUtils.GetAmountOfFiles(Paths.framesOutPath, false) < 1) return;
 
-            if (outputFormatBox.Text == Upscale.VidExportMode.MP4.ToStringTitleCase())
+            if(outputFormatBox.Text == Upscale.VidExportMode.MP4.ToStringTitleCase())
                 outputFormat = Upscale.VidExportMode.MP4;
-            if (outputFormatBox.Text == Upscale.VidExportMode.GIF.ToStringTitleCase())
+            if(outputFormatBox.Text == Upscale.VidExportMode.GIF.ToStringTitleCase())
                 outputFormat = Upscale.VidExportMode.GIF;
-            if (outputFormatBox.Text == Upscale.VidExportMode.SameAsSource.ToStringTitleCase())
+            if(outputFormatBox.Text == Upscale.VidExportMode.SameAsSource.ToStringTitleCase())
                 outputFormat = (Upscale.VidExportMode)Enum.Parse(typeof(Upscale.VidExportMode), Path.GetExtension(currentInPath).Replace(".", "").ToUpper());
 
-            if (outputFormat == Upscale.VidExportMode.MP4)
+            if(outputFormat == Upscale.VidExportMode.MP4)
             {
                 DialogForm f = new DialogForm("Creating video from frames...", 300);
                 await Task.Delay(10);
                 await FFmpegCommands.FramesToMp4(Paths.framesOutPath, Config.GetBool("h265"), Config.GetInt("crf"), fps, "", false);
-                if (Config.GetBool("vidEnableAudio"))
+                if(Config.GetBool("vidEnableAudio"))
                     await FFmpegCommands.MergeAudio(Paths.framesOutPath + ".mp4", currentInPath);
                 f.Close();
             }
 
-            if (outputFormat == Upscale.VidExportMode.GIF)
+            if(outputFormat == Upscale.VidExportMode.GIF)
             {
                 DialogForm f = new DialogForm("Creating GIF from frames...\nThis can take a while for high-resolution GIFs.", 600);
                 await Task.Delay(10);
@@ -169,7 +169,7 @@ namespace Cupscale.UI
 
         static void CopyBack(string path)
         {
-            if (!File.Exists(path))
+            if(!File.Exists(path))
             {
                 Print("No video file was created!");
                 return;
@@ -181,7 +181,7 @@ namespace Cupscale.UI
 
             try
             {
-                if (Upscale.overwriteMode == Upscale.Overwrite.No)
+                if(Upscale.overwriteMode == Upscale.Overwrite.No)
                     outPath = Path.Combine(outDir.Text.Trim(), filename + "-" + Upscale.GetLastModelName() + ext);
                 else
                     outPath = Path.Combine(outDir.Text.Trim(), Path.GetFileName(currentInPath));
@@ -195,7 +195,7 @@ namespace Cupscale.UI
             Print("Moving output video to " + outPath + "...");
             try
             {
-                if (File.Exists(outPath))
+                if(File.Exists(outPath))
                     File.Delete(outPath);
                 File.Move(path, outPath);
             }
@@ -210,7 +210,7 @@ namespace Cupscale.UI
             string[] frames = IoUtils.GetCompatibleFiles(Paths.framesOutPath, false);
             foreach (string frame in frames)
             {
-                if (frame.Contains("-"))
+                if(frame.Contains("-"))
                 {
                     string filename = Path.GetFileName(frame);
                     string newFilename = Path.GetFileNameWithoutExtension(frame).Split('-')[0];
@@ -223,11 +223,11 @@ namespace Cupscale.UI
 
         static void Print(string s, bool replaceLastLine = false)
         {
-            if (replaceLastLine)
+            if(replaceLastLine)
             {
                 logBox.Text = logBox.Text.Remove(logBox.Text.LastIndexOf(Environment.NewLine));
             }
-            if (string.IsNullOrWhiteSpace(logBox.Text))
+            if(string.IsNullOrWhiteSpace(logBox.Text))
                 logBox.Text += s;
             else
                 logBox.Text += Environment.NewLine + s;

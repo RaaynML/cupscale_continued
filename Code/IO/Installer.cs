@@ -6,6 +6,7 @@ using System.Net;
 using System.Threading.Tasks;
 using System.Windows;
 using Cupscale.Forms;
+using Cupscale.OS;
 using Cupscale.Properties;
 using Cupscale.UI;
 
@@ -19,20 +20,18 @@ namespace Cupscale.IO
 		public static async Task Init()
 		{
 			path = Paths.binPath;
-
 			return;	// NO LONGER USED, AT LEAST FOR NOW!!
 
-			exeFilesVersion = new StringReader(Resources.shipped_files_version).ReadLine().Split('#')[0].GetInt();
-			Logger.Log($"[Installer] Initializing - Exe Files Version is {exeFilesVersion}.");
-
-			if (!InstallationIsValid())
-				await Install();
-			else
-				Logger.Log("[Installer] Installation is valid.");
+			//exeFilesVersion = new StringReader(Resources.shipped_files_version).ReadLine().Split('#')[0].GetInt();
+			//Logger.Log($"[Installer] Initializing - Exe Files Version is {exeFilesVersion}.");
+			//if(!InstallationIsValid())
+			//	await Install();
+			//else
+			//	Logger.Log("[Installer] Installation is valid.");
 		}
 
-		public static bool InstallationIsValid ()
-        {
+		public static bool InstallationIsValid()
+		{
 			List<string> requiredDirs = new List<string>();
 			requiredDirs.Add(Path.Combine(path, "Tools"));
 			requiredDirs.Add(Path.Combine(path, "Tools", "Lib", "site-packages"));
@@ -49,8 +48,8 @@ namespace Cupscale.IO
 			requiredFiles.Add(Path.Combine(path, "gifski.exe"));
 
 			foreach (string dir in requiredDirs)
-            {
-				if (!Directory.Exists(dir))
+			{
+				if(!Directory.Exists(dir))
 				{
 					Logger.Log("[Installer] Installation invalid: Directory " + dir + " not found");
 					return false;
@@ -59,7 +58,7 @@ namespace Cupscale.IO
 
 			foreach (string file in requiredFiles)
 			{
-				if (!File.Exists(file))
+				if(!File.Exists(file))
 				{
 					Logger.Log("[Installer] Installation invalid: File " + file + " not found");
 					return false;
@@ -67,8 +66,8 @@ namespace Cupscale.IO
 			}
 
 			int diskVersion = IoUtils.ReadLines(Path.Combine(Paths.GetDataPath(), "shipped-files-version.txt"))[0].Split('#')[0].GetInt();
-			if (exeFilesVersion != diskVersion)
-            {
+			if(exeFilesVersion != diskVersion)
+			{
 				Logger.Log("[Installer] Installation invalid: Shipped file version mismatch - Executable is " + exeFilesVersion + ", installation is " + diskVersion);
 				return false;
 			}
@@ -78,13 +77,13 @@ namespace Cupscale.IO
 
 		static string path7za = "";
 
-		public static async Task Install ()
+		public static async Task Install()
 		{
 			Program.mainForm.Enabled = false;
 			DialogForm dialog = new DialogForm("Installing resources...\nThis only needs to be done once.");
 			await Task.Delay(20);
 
-			if (IoUtils.GetDirSize(path) > 0)
+			if(IoUtils.GetDirSize(path) > 0)
 			{
 				Logger.Log("[Installer] {path} is not 0 bytes - removing everything there to ensure a clean install.");
 				dialog.ChangeText("Uninstalling older files...");
@@ -97,17 +96,27 @@ namespace Cupscale.IO
 			path7za = Path.Combine(path, "7za.exe");
 			File.WriteAllBytes(path7za, Resources.x64_7za);
 
-            try
-            {
+			try
+			{
 				await DownloadAndInstall(exeFilesVersion, "esrgan.7z");
 				await DownloadAndInstall(exeFilesVersion, "esrgan-ncnn.7z");
+
+				if( NvApi.HasAmpereOrNewer() ){
+					Logger.Log("Updating embedded python for Ampere\n");
+					string dir_pyth = Path.Combine(Paths.GetDataPath(), "ShippedEsrgan", "Tools", "python.exe");
+					Process pyupdate = OsUtils.NewProcess(false);
+					pyupdate.StartInfo.Arguments = $"/K {dir_pyth} -m pip install torch==1.10.1+cu113 torchvision==0.11.2+cu113 torchaudio===0.10.1+cu113 -f https://download.pytorch.org/whl/cu113/torch_stable.html";
+					pyupdate.Start();
+					pyupdate.WaitForExit();
+				}
+
 				await DownloadAndInstall(exeFilesVersion, "av.7z");
 				await DownloadAndInstall(exeFilesVersion, "shipped-files-version.txt", false);
 			}
-            catch (Exception e)
-            {
+			catch (Exception e)
+			{
 				MsgBox msg = Logger.ErrorMessage("Web Installer failed to run!\n", e);
-				while (DialogQueue.IsOpen(msg)) await Task.Delay(50);
+				while(DialogQueue.IsOpen(msg)) await Task.Delay(50);
 				Environment.Exit(1);
 				return;
 			}
@@ -132,8 +141,8 @@ namespace Cupscale.IO
 			await client.DownloadFileTaskAsync(new Uri(url), savePath);
 
 			if(Path.GetExtension(filename).ToLower() == ".7z")		// Only run extractor if it's a 7z archive
-            {
-				if (currentDlDialog != null)
+			{
+				if(currentDlDialog != null)
 					currentDlDialog.ChangeText($"Installing {filename}...");
 				await UnSevenzip(Path.Combine(Paths.GetDataPath(), filename));
 			}
@@ -148,7 +157,7 @@ namespace Cupscale.IO
 		static void DownloadProgressChanged(object sender, DownloadProgressChangedEventArgs e)
 		{
 			if(sw.ElapsedMilliseconds > 250)
-            {
+			{
 				sw.Restart();
 				string newText = currentDlDialog.GetText().Split('…')[0] + "… " + e.ProgressPercentage + "%";
 				currentDlDialog.ChangeText(newText);
@@ -156,9 +165,9 @@ namespace Cupscale.IO
 		}
 
 		static async Task UnSevenzip (string path)
-        {
+		{
 			Logger.Log("[Installer] Extracting " + path);
-			await Task.Delay(20);
+			await Task.Delay(10);
 			SevenZipNET.SevenZipExtractor.Path7za = path7za;
 			SevenZipNET.SevenZipExtractor extractor = new SevenZipNET.SevenZipExtractor(path);
 			extractor.ExtractAll(Paths.GetDataPath(), true, true);
@@ -169,12 +178,12 @@ namespace Cupscale.IO
 		public static bool Exists()
 		{
 			DirectoryInfo directoryInfo = new DirectoryInfo(path);
-			if (directoryInfo == null || !Directory.Exists(directoryInfo.FullName))
+			if(directoryInfo == null || !Directory.Exists(directoryInfo.FullName))
 			{
 				return false;
 			}
 			FileInfo[] files = directoryInfo.GetFiles("*.py", SearchOption.AllDirectories);
-			if (files.Length >= 4)
+			if(files.Length >= 4)
 			{
 				return true;
 			}
@@ -182,20 +191,20 @@ namespace Cupscale.IO
 		}
 
 		public static void Uninstall (bool full)
-        {
-			if (!Directory.Exists(Paths.GetDataPath()))
+		{
+			if(!Directory.Exists(Paths.GetDataPath()))
 				return;
-            try
-            {
-				if (full)
+			try
+			{
+				if(full)
 					Directory.Delete(Paths.GetDataPath(), true);
 				else
 					Directory.Delete(path, true);
 			}
 			catch (Exception e)
-            {
+			{
 				Logger.Log("Failed to uninstall.\nClose Cupscale and try deleting CupscaleData manually. " + e.Message);
-            }
+			}
 		}
 	}
 }

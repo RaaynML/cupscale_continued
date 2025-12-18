@@ -21,7 +21,7 @@ namespace Cupscale.Implementations
 
         public static async Task Run(string inpath, string outpath, ModelData mdl)
         {
-            if (!CheckIfExeExists(Imps.esrganNcnn, exeName))
+            if(!CheckIfExeExists(Imps.esrganNcnn, exeName))
                 return;
 
             string modelPath = mdl.model1Path;
@@ -45,7 +45,7 @@ namespace Cupscale.Implementations
             Process proc = OsUtils.NewProcess(!showWindow);
             proc.StartInfo.Arguments = cmd;
 
-            if (!showWindow)
+            if(!showWindow)
             {
                 proc.OutputDataReceived += (sender, outLine) => { OutputHandler(outLine.Data, false); };
                 proc.ErrorDataReceived += (sender, outLine) => { OutputHandler(outLine.Data, true); };
@@ -54,16 +54,16 @@ namespace Cupscale.Implementations
             Program.lastImpProcess = proc;
             proc.Start();
 
-            if (!showWindow)
+            if(!showWindow)
             {
                 proc.BeginOutputReadLine();
                 proc.BeginErrorReadLine();
             }
 
-            while (!proc.HasExited)
+            while(!proc.HasExited)
                 await Task.Delay(50);
 
-            if (Upscale.currentMode == Upscale.UpscaleMode.Batch)
+            if(Upscale.currentMode == Upscale.UpscaleMode.Batch)
             {
                 await Task.Delay(1000);
                 Program.mainForm.SetProgress(100f, "Post-Processing...");
@@ -73,7 +73,7 @@ namespace Cupscale.Implementations
 
         private static void OutputHandler(string line, bool error)
         {
-            if (string.IsNullOrWhiteSpace(line) || line.Length < 6)
+            if(string.IsNullOrWhiteSpace(line) || line.Length < 6)
                 return;
 
             Logger.Log("[NCNN] " + line.Replace("\n", " ").Replace("\r", " "));

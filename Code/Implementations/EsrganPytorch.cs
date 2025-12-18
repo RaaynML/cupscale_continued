@@ -36,8 +36,8 @@ namespace Cupscale.Implementations
             string alphaMode = alpha ? $"--alpha_mode {Config.GetInt("esrganPytorchAlphaMode")}" : "--alpha_mode 0";
 
             string alphaDepth = "";
-            if (Config.GetInt("esrganPytorchAlphaDepth") == 1) alphaDepth = "--binary_alpha";
-            if (Config.GetInt("esrganPytorchAlphaDepth") == 2) alphaDepth = "--ternary_alpha";
+            if(Config.GetInt("esrganPytorchAlphaDepth") == 1) alphaDepth = "--binary_alpha";
+            if(Config.GetInt("esrganPytorchAlphaDepth") == 2) alphaDepth = "--ternary_alpha";
 
             string cpu = Config.GetBool("esrganPytorchCpu") ? "--cpu" : "";
             string device = $"--device_id {Config.GetInt("esrganPytorchGpuId")}";
@@ -60,7 +60,7 @@ namespace Cupscale.Implementations
             Process proc = OsUtils.NewProcess(!showWindow);
             proc.StartInfo.Arguments = cmd;
 
-            if (!showWindow)
+            if(!showWindow)
             {
                 proc.OutputDataReceived += (sender, outLine) => { OutputHandler(outLine.Data, false); };
                 proc.ErrorDataReceived += (sender, outLine) => { OutputHandler(outLine.Data, true); };
@@ -69,21 +69,21 @@ namespace Cupscale.Implementations
             Program.lastImpProcess = proc;
             proc.Start();
 
-            if (!showWindow)
+            if(!showWindow)
             {
                 proc.BeginOutputReadLine();
                 proc.BeginErrorReadLine();
             }
 
-            while (!proc.HasExited)
+            while(!proc.HasExited)
             {
-                if (showTileProgress)
+                if(showTileProgress)
                     await UpdateProgressFromFile();
 
                 await Task.Delay(50);
             }
 
-            if (Upscale.currentMode == Upscale.UpscaleMode.Batch)
+            if(Upscale.currentMode == Upscale.UpscaleMode.Batch)
             {
                 await Task.Delay(1000);
                 //Program.mainForm.SetProgress(100f, "Post-Processing...");
@@ -99,13 +99,13 @@ namespace Cupscale.Implementations
             string mdl2 = mdl.model2Path;
             ModelData.ModelMode mdlMode = mdl.mode;
 
-            if (mdlMode == ModelData.ModelMode.Single)
+            if(mdlMode == ModelData.ModelMode.Single)
             {
                 Program.lastModelName = mdl.model1Name;
                 return mdl1.Wrap(true, false);
             }
 
-            if (mdlMode == ModelData.ModelMode.Interp)
+            if(mdlMode == ModelData.ModelMode.Interp)
             {
                 int interpLeft = 100 - mdl.interp;
                 int interpRight = mdl.interp;
@@ -115,13 +115,13 @@ namespace Cupscale.Implementations
                 return (mdl1 + ";" + interpLeft + "&" + mdl2 + ";" + interpRight).Wrap(true);
             }
 
-            if (mdlMode == ModelData.ModelMode.Chain)
+            if(mdlMode == ModelData.ModelMode.Chain)
             {
                 Program.lastModelName = mdl.model1Name + ">>" + mdl.model2Name;
                 return (mdl1 + ">" + mdl2).Wrap(true);
             }
 
-            if (mdlMode == ModelData.ModelMode.Advanced)
+            if(mdlMode == ModelData.ModelMode.Advanced)
             {
                 Program.lastModelName = "Advanced";
                 return AdvancedModelSelection.GetArg();
@@ -149,7 +149,7 @@ namespace Cupscale.Implementations
             proc.StartInfo.Arguments = cmd;
             Logger.Log("[ESRGAN Interp] CMD: " + proc.StartInfo.Arguments);
 
-            if (!showWindow)
+            if(!showWindow)
             {
                 proc.OutputDataReceived += (sender, outLine) => { OutputHandler(outLine.Data, false); };
                 proc.ErrorDataReceived += (sender, outLine) => { OutputHandler(outLine.Data, true); };
@@ -157,21 +157,21 @@ namespace Cupscale.Implementations
 
             proc.Start();
 
-            if (!showWindow)
+            if(!showWindow)
             {
                 proc.BeginOutputReadLine();
                 proc.BeginErrorReadLine();
             }
 
-            while (!proc.HasExited)
+            while(!proc.HasExited)
                 await Task.Delay(50);
 
             //string output = proc.StandardOutput.ReadToEnd();
             //string err = proc.StandardError.ReadToEnd();
-            //if (!string.IsNullOrWhiteSpace(err)) output += "\n" + err;
+            //if(!string.IsNullOrWhiteSpace(err)) output += "\n" + err;
             //Logger.Log("[ESRGAN Interp] Output: " + output);
             //
-            //if (output.ToLower().Contains("error"))
+            //if(output.ToLower().Contains("error"))
             //    throw new Exception("Interpolation Error - Output:\n" + output);
 
             return outPath;
@@ -179,12 +179,12 @@ namespace Cupscale.Implementations
 
         private static void OutputHandler(string line, bool error)
         {
-            if (string.IsNullOrWhiteSpace(line) || line.Length < 3)
+            if(string.IsNullOrWhiteSpace(line) || line.Length < 3)
                 return;
 
             Logger.Log("[Python] " + line.Replace("\n", " ").Replace("\r", " "));
 
-            if (error)
+            if(error)
                 GeneralOutputHandler.HandleImpErrorMsgs(line, GeneralOutputHandler.ProcessType.Python);
         }
 
@@ -194,22 +194,22 @@ namespace Cupscale.Implementations
         {
             string progressLogFile = ProgressLogFile;
 
-            if (!File.Exists(progressLogFile))
+            if(!File.Exists(progressLogFile))
                 return;
 
             string[] lines = IoUtils.ReadLines(progressLogFile);
 
-            if (lines.Length < 1)
+            if(lines.Length < 1)
                 return;
 
             string outStr = (lines[lines.Length - 1]);
 
-            if (outStr == lastProgressString)
+            if(outStr == lastProgressString)
                 return;
 
             lastProgressString = outStr;
 
-            if (outStr.Contains("Applying model") || outStr.Contains("Upscaling..."))
+            if(outStr.Contains("Applying model") || outStr.Contains("Upscaling..."))
             {
                 Program.mainForm.SetProgress(5f, "Upscaling...");
                 return;

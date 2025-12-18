@@ -54,7 +54,7 @@ namespace Cupscale.Forms
         {
             using (var modelForm = new ModelSelectForm(entry1Model1, 0))
             {
-                if (modelForm.ShowDialog() == DialogResult.OK)
+                if(modelForm.ShowDialog() == DialogResult.OK)
                     e1m1 = modelForm.selectedModel;
             }
         }
@@ -63,7 +63,7 @@ namespace Cupscale.Forms
         {
             using (var modelForm = new ModelSelectForm(entry1Model2, 0))
             {
-                if (modelForm.ShowDialog() == DialogResult.OK)
+                if(modelForm.ShowDialog() == DialogResult.OK)
                     e1m2 = modelForm.selectedModel;
             }
         }
@@ -72,7 +72,7 @@ namespace Cupscale.Forms
         {
             using (var modelForm = new ModelSelectForm(entry2Model1, 0))
             {
-                if (modelForm.ShowDialog() == DialogResult.OK)
+                if(modelForm.ShowDialog() == DialogResult.OK)
                     e2m1 = modelForm.selectedModel;
             }
         }
@@ -81,7 +81,7 @@ namespace Cupscale.Forms
         {
             using (var modelForm = new ModelSelectForm(entry2Model2, 0))
             {
-                if (modelForm.ShowDialog() == DialogResult.OK)
+                if(modelForm.ShowDialog() == DialogResult.OK)
                     e2m2 = modelForm.selectedModel;
             }
         }
@@ -90,7 +90,7 @@ namespace Cupscale.Forms
         {
             using (var modelForm = new ModelSelectForm(entry3Model1, 0))
             {
-                if (modelForm.ShowDialog() == DialogResult.OK)
+                if(modelForm.ShowDialog() == DialogResult.OK)
                     e3m1 = modelForm.selectedModel;
             }
         }
@@ -99,7 +99,7 @@ namespace Cupscale.Forms
         {
             using (var modelForm = new ModelSelectForm(entry3Model2, 0))
             {
-                if (modelForm.ShowDialog() == DialogResult.OK)
+                if(modelForm.ShowDialog() == DialogResult.OK)
                     e3m2 = modelForm.selectedModel;
             }
         }
@@ -124,7 +124,7 @@ namespace Cupscale.Forms
 
         private void AdvancedModelForm_Load(object sender, EventArgs e)
         {
-            if (!LoadPreset("lastUsed"))
+            if(!LoadPreset("lastUsed"))
                 return;
 
             ChangeButtonText(entry1Model1, GetModelName(e1m1));
@@ -145,7 +145,7 @@ namespace Cupscale.Forms
 
         void ChangeButtonText (Button btn, string newText)
         {
-            if (!string.IsNullOrWhiteSpace(newText))
+            if(!string.IsNullOrWhiteSpace(newText))
                 btn.Text = newText;
 
         }

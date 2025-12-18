@@ -11,37 +11,37 @@ using System.Windows.Forms;
 
 namespace Cupscale.Forms
 {
-    public partial class DialogForm : Form
-    {
-        public DialogForm(string message, float selfDestructTime = 60f)
-        {
-            InitializeComponent();
-            Program.currentTemporaryForms.Add(this);
-            mainLabel.Text = message;
-            Show();
-            //TopMost = true;
-            SelfDestruct(selfDestructTime);
-        }
+	public partial class DialogForm : Form
+	{
+		public DialogForm(string message, float selfDestructTime = 60f)
+		{
+			InitializeComponent();
+			Program.currentTemporaryForms.Add(this);
+			mainLabel.Text = message;
+			Show();
+			//TopMost = true;
+			_ = SelfDestruct(selfDestructTime);
+		}
 
-        public void ChangeText (string s)
-        {
-            mainLabel.Text = s;
-        }
+		public void ChangeText (string s)
+		{
+			mainLabel.Text = s;
+		}
 
-        public string GetText ()
-        {
-            return mainLabel.Text;
-        }
+		public string GetText()
+		{
+			return mainLabel.Text;
+		}
 
-        private async Task SelfDestruct (float time)
-        {
-            await Task.Delay((time * 1000f).RoundToInt());
-            Close();
-        }
+		private async Task SelfDestruct (float time)
+		{
+			await Task.Delay((time * 1000f).RoundToInt());
+			Close();
+		}
 
-        private void DialogForm_FormClosing(object sender, FormClosingEventArgs e)
-        {
-            Program.currentTemporaryForms.Remove(this);
-        }
-    }
+		private void DialogForm_FormClosing(object sender, FormClosingEventArgs e)
+		{
+			Program.currentTemporaryForms.Remove(this);
+		}
+	}
 }

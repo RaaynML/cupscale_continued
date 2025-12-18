@@ -29,7 +29,7 @@ namespace Cupscale.Properties {
         private static global::System.Globalization.CultureInfo resourceCulture;
         
         [global::System.Diagnostics.CodeAnalysis.SuppressMessageAttribute("Microsoft.Performance", "CA1811:AvoidUncalledPrivateCode")]
-        internal Resources() {
+        internal Resources(){
         }
         
         /// <summary>
@@ -38,7 +38,7 @@ namespace Cupscale.Properties {
         [global::System.ComponentModel.EditorBrowsableAttribute(global::System.ComponentModel.EditorBrowsableState.Advanced)]
         public static global::System.Resources.ResourceManager ResourceManager {
             get {
-                if (object.ReferenceEquals(resourceMan, null)) {
+                if(object.ReferenceEquals(resourceMan, null)){
                     global::System.Resources.ResourceManager temp = new global::System.Resources.ResourceManager("Cupscale.Properties.Resources", typeof(Resources).Assembly);
                     resourceMan = temp;
                 }

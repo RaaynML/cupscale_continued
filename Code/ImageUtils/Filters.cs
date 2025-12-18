@@ -12,12 +12,14 @@ namespace Cupscale.ImageUtils
         public static Filter bicubic = new Filter { Name = "Catrom", Alias = "Bicubic" };
         public static Filter nearest = new Filter { Name = "Point", Alias = "Nearest Neighbor" };
         public static Filter lanczos = new Filter { Name = "Lanczos", Alias = "Lanczos" };
-        //public static Filter lanczos2 = new Filter { Name = "Lanczos2", Alias = "Lanczos 2" };
-        //public static Filter lanczos2Sharp = new Filter { Name = "Lanczos2Sharp", Alias = "Lanczos 2 Sharp" };
+		public static Filter sinc = new Filter { Name = "Sinc", Alias = "Sinc" };
+        public static Filter triangle = new Filter { Name = "Triangle", Alias = "Triangle" };
+		//public static Filter lanczos2 = new Filter { Name = "Lanczos2", Alias = "Lanczos 2" };
+		//public static Filter lanczos2Sharp = new Filter { Name = "Lanczos2Sharp", Alias = "Lanczos 2 Sharp" };
 
-        public static List<Filter> allFilters = new List<Filter> { mitchell, bicubic, nearest, lanczos };
+		public static List<Filter> allFilters = new List<Filter> { mitchell, bicubic, nearest, lanczos, sinc, triangle };
         public static List<Filter> previewFilters = new List<Filter> { bicubic, nearest };
-        public static List<Filter> resizeFilters = new List<Filter> { mitchell, bicubic, nearest, lanczos };
+        public static List<Filter> resizeFilters = new List<Filter> { mitchell, bicubic, nearest, lanczos, sinc, triangle };
 
         public class Filter
         {
@@ -27,10 +29,8 @@ namespace Cupscale.ImageUtils
 
         public static Filter GetFilter(string alias)
         {
-            foreach(Filter f in allFilters)
-            {
-                if (f.Alias == alias)
-                    return f;
+            foreach(Filter f in allFilters){
+                if(f.Alias == alias){ return f; }
             }
 
             return mitchell;

@@ -19,18 +19,18 @@ namespace Cupscale.ImageUtils
     {
         public static Image GetImage(string path)
         {
-            if (Logger.doLogIo) Logger.Log("[ImgUtils] Reading Image from " + path);
+            if(Logger.doLogIo) Logger.Log("[ImgUtils] Reading Image from " + path);
             using MemoryStream stream = new MemoryStream(File.ReadAllBytes(path));
             Image img = Image.FromStream(stream);
-            if (Logger.doLogIo) Logger.Log("[OK]", true, true);
+            if(Logger.doLogIo) Logger.Log("[OK]", true, true);
             return img;
         }
 
         public static MagickImage GetMagickImage(string path, bool allowTgaFlip = false)
         {
-            if (Logger.doLogIo) Logger.Log("[ImgUtils] Reading MagickImage from " + path);
+            if(Logger.doLogIo) Logger.Log("[ImgUtils] Reading MagickImage from " + path);
             MagickImage image;
-            if (Path.GetExtension(path).ToLower() == ".dds")
+            if(Path.GetExtension(path).ToLower() == ".dds")
             {
                 try
                 {
@@ -56,12 +56,12 @@ namespace Cupscale.ImageUtils
             {
                 image = new MagickImage(path);
             }
-            if (allowTgaFlip && Path.GetExtension(path).ToLower() == ".tga" && Config.GetBool("flipTga"))
+            if(allowTgaFlip && Path.GetExtension(path).ToLower() == ".tga" && Config.GetBool("flipTga"))
             {
                 image.Flip();
-                if (Logger.doLogIo) Logger.Log("[Flipped TGA]", true, true);
+                if(Logger.doLogIo) Logger.Log("[Flipped TGA]", true, true);
             }
-            if (Logger.doLogIo) Logger.Log("[OK]", true, true);
+            if(Logger.doLogIo) Logger.Log("[OK]", true, true);
             return image;
         }
 
@@ -73,7 +73,7 @@ namespace Cupscale.ImageUtils
             {
                 bitmap.Save(memoryStream, System.Drawing.Imaging.ImageFormat.Png);
                 memoryStream.Position = 0;
-                result = new MagickImage(memoryStream, new MagickReadSettings() { Format = MagickFormat.Png00 });
+                result = new MagickImage(memoryStream, new MagickReadSettings(){ Format = MagickFormat.Png00 });
             }
             return result;
         }
@@ -127,11 +127,11 @@ namespace Cupscale.ImageUtils
             foreach (string img in imgs)
             {
                 collection.Add(img);
-                if (deleteSourceImgs)
+                if(deleteSourceImgs)
                     File.Delete(img);
             }
 
-            if (!vertically)
+            if(!vertically)
                 return (MagickImage)collection.AppendHorizontally();
             else
                 return (MagickImage)collection.AppendVertically();

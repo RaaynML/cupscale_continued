@@ -12,12 +12,12 @@ namespace Cupscale
 
 		public static void CheckModelDir()
 		{
-			if (string.IsNullOrWhiteSpace(Config.Get("modelPath")))
+			if(string.IsNullOrWhiteSpace(Config.Get("modelPath")))
 			{
 				Program.ShowMessage("Please set a model path in the settings.\nPoint it to the folder where you save your .pth model files.", "Notice");
 				new SettingsForm().ShowDialog();
 			}
-			else if (!Directory.Exists(Config.Get("modelPath")))
+			else if(!Directory.Exists(Config.Get("modelPath")))
 			{
 				Program.ShowMessage("The model path you entered isn't valid!", "Notice");
 				new SettingsForm().ShowDialog();
@@ -29,7 +29,7 @@ namespace Cupscale
 			string[] files = Directory.GetFiles("*.pth", Config.Get("modelPath"), SearchOption.AllDirectories);
 			foreach(string modelFile in files)
             {
-				if (Path.GetFileNameWithoutExtension(modelFile) == modelName)
+				if(Path.GetFileNameWithoutExtension(modelFile) == modelName)
 					return true;
             }
 			return false;
@@ -38,7 +38,7 @@ namespace Cupscale
 		public static void ReloadModelList()
 		{
 			string mdlPath = Config.Get("modelPath");
-            if (!Directory.Exists(mdlPath))
+            if(!Directory.Exists(mdlPath))
             {
 				Logger.Log("[EsrganData] Model dir doesn't exist!");
 				return;
@@ -50,7 +50,7 @@ namespace Cupscale
 			foreach (string path in array)
 			{
 				string fileName = Path.GetFileName(path);
-				if (fileName.EndsWith(".pth"))
+				if(fileName.EndsWith(".pth"))
 				{
 					models.Add(fileName.Replace(".pth", ""));
 					modelsFullPath.Add(path);

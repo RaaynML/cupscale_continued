@@ -28,7 +28,7 @@ namespace Cupscale.OS
 
             try
             {
-                if (IsDirNcnnModel(modelPath))
+                if(IsDirNcnnModel(modelPath))
                 {
 					ApplyFilenamePattern(modelPath, filenamePattern);
 					currentNcnnModel = modelPath;
@@ -41,13 +41,13 @@ namespace Cupscale.OS
                 string outPath = Path.Combine(ncnnDir, Path.ChangeExtension(modelName, null));
                 Logger.Log("Checking for NCNN model: " + outPath);
 
-                if (IoUtils.GetAmountOfFiles(outPath, false) < 2)
+                if(IoUtils.GetAmountOfFiles(outPath, false) < 2)
                 {
                     Logger.Log("Running model converter...");
                     DialogForm dialog = new DialogForm("Converting ESRGAN model to NCNN format...");
                     await RunConverter(modelPath);
 
-                    if (lastNcnnOutput.Contains("Error:"))
+                    if(lastNcnnOutput.Contains("Error:"))
                         throw new Exception(lastNcnnOutput.SplitIntoLines().Where(x => x.Contains("Error:")).First());
 
 					string moveFrom = Path.Combine(ConverterDir, Path.ChangeExtension(modelName, null));
@@ -85,7 +85,7 @@ namespace Cupscale.OS
 			modelPath = modelPath.Wrap();
 
 			string opt = "/C";
-			if (stayOpen) opt = "/K";
+			if(stayOpen) opt = "/K";
 
 			string args = $"{opt} cd /D {ConverterDir.Wrap()} & pth2ncnn.exe {modelPath}";
 
@@ -93,7 +93,7 @@ namespace Cupscale.OS
 			Process converterProc = OsUtils.NewProcess(!showWindow);
 			converterProc.StartInfo.Arguments = args;
 
-			if (!showWindow)
+			if(!showWindow)
 			{
 				converterProc.OutputDataReceived += OutputHandler;
 				converterProc.ErrorDataReceived += OutputHandler;
@@ -102,19 +102,19 @@ namespace Cupscale.OS
 			currentProcess = converterProc;
 			converterProc.Start();
 
-			if (!showWindow)
+			if(!showWindow)
 			{
 				converterProc.BeginOutputReadLine();
 				converterProc.BeginErrorReadLine();
 			}
 
-			while (!converterProc.HasExited)
+			while(!converterProc.HasExited)
 				await Task.Delay(100);
 		}
 
 		private static void OutputHandler(object sendingProcess, DataReceivedEventArgs output)
 		{
-			if (output == null || output.Data == null)
+			if(output == null || output.Data == null)
 				return;
 
 			string data = output.Data;
@@ -126,17 +126,17 @@ namespace Cupscale.OS
         {
             try
             {
-				if (!IoUtils.IsPathDirectory(path))
+				if(!IoUtils.IsPathDirectory(path))
 					return false;
 
 				DirectoryInfo dir = new DirectoryInfo(path);
 				bool suffixValid = dir.Name.EndsWith(".ncnn");
 				bool filesValid = dir.GetFiles("*.bin").Length == 1 && dir.GetFiles("*.param").Length == 1;
 
-				if (noMoreThanTwoFiles && dir.GetFiles("*").Length > 2)
+				if(noMoreThanTwoFiles && dir.GetFiles("*").Length > 2)
 					filesValid = false;
 
-				if (requireSuffix && !suffixValid)
+				if(requireSuffix && !suffixValid)
 					return false;
 
 				return filesValid;

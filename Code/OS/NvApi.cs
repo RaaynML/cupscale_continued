@@ -10,113 +10,100 @@ using System.Windows.Forms;
 
 namespace Cupscale.OS
 {
-    class NvApi
-    {
-        public enum Architecture { Undetected, Fermi, Kepler, Maxwell, Pascal, Turing, Ampere };
-        public static List<PhysicalGPU> gpuList = new List<PhysicalGPU>();
+	class NvApi
+	{
+		public enum Architecture { Undetected, Fermi, Kepler, Maxwell, Pascal, Turing, Ampere };
+		public static List<PhysicalGPU> gpuList = new List<PhysicalGPU>();
 
-        public static async void Init ()
-        {
-            try
-            {
-                NVIDIA.Initialize();
-                PhysicalGPU[] gpus = PhysicalGPU.GetPhysicalGPUs();
+		public static async void Init()
+		{
+			try {
+				NVIDIA.Initialize();
+				PhysicalGPU[] gpus = PhysicalGPU.GetPhysicalGPUs();
 
-                if (gpus.Length == 0)
-                    return;
+				if(gpus.Length == 0){ return; }
 
-                gpuList = gpus.ToList();
-                List<string> gpuNames = new List<string>();
+				gpuList = gpus.ToList();
+				List<string> gpuNames = new List<string>();
 
-                foreach (PhysicalGPU gpu in gpus)
-                    Logger.Log($"Detected Card: {gpu.FullName} / GPU: {gpu.ArchitectInformation.ShortName} / Arch: {GetArch(gpu)}");
+				foreach (PhysicalGPU gpu in gpus)
+					{ Logger.Log($"Detected Card: {gpu.FullName} / GPU: {gpu.ArchitectInformation.ShortName} / Arch: {GetArch(gpu)}"); }
 
-                Logger.Log($"Initialized Nvidia API. GPU{(gpus.Length > 1 ? "s" : "")}: {GetGpuListStr()}");
+				Logger.Log($"Initialized Nvidia API. GPU{(gpus.Length > 1 ? "s" : "")}: {GetGpuListStr()}");
 
-                while (true)
-                {
-                    RefreshVram();
-                    await Task.Delay(1000);
-                }
-            }
-            catch (Exception e)
-            {
-                Logger.Log($"Failed to initialize NvApi: {e.Message}\nIgnore this if you don't have an Nvidia GPU.");
-            }
-        }
+				while(true){
+					RefreshVram();
+					await Task.Delay(1000);
+				}
+			} catch (Exception e){
+				Logger.Log($"Failed to initialize NvApi: {e.Message}\nIgnore this if you don't have an Nvidia GPU.");
+			}
+		}
 
-        public static string GetGpuListStr ()
-        {
-            return string.Join(", ", gpuList.Select(x => x.FullName));
-        }
+		public static string GetGpuListStr()
+		{
+			return string.Join(", ", gpuList.Select(x => x.FullName));
+		}
 
-        public static bool HasAmpereOrNewer()   // To detect if newer Pytorch version is needed
-        {
-            return false; // TODO: REMOVE ME
+		public static bool HasAmpereOrNewer()   // To detect if newer Pytorch version is needed
+		{
+			//return false; // TODO: REMOVE ME
 
-            foreach (PhysicalGPU gpu in gpuList)
-            {
-                Architecture arch = GetArch(gpu);
+			foreach (PhysicalGPU gpu in gpuList){
+				Architecture arch = GetArch(gpu);
 
-                if (arch == Architecture.Ampere || arch == Architecture.Undetected)
-                    return true;
-            }
+				if(arch == Architecture.Ampere || arch == Architecture.Undetected)
+					{ return true; }
+			}
 
-            return false;
-        }
+			return false;
+		}
 
-        public static Architecture GetArch(PhysicalGPU gpu)
-        {
-            string gpuCode = gpu.ArchitectInformation.ShortName;
+		public static Architecture GetArch(PhysicalGPU gpu)
+		{
+			string gpuCode = gpu.ArchitectInformation.ShortName.Trim().Substring(0, 2);
+			if(gpuCode.Equals("TU")){ return Architecture.Turing;	}
+			if(gpuCode.Equals("GA")){ return Architecture.Ampere;	}
+			if(gpuCode.Equals("GP")){ return Architecture.Pascal;	}
+			if(gpuCode.Equals("GM")){ return Architecture.Maxwell;	}
+			if(gpuCode.Equals("GK")){ return Architecture.Kepler;	}
+			if(gpuCode.Equals("GF")){ return Architecture.Fermi;	}
+			
+			return Architecture.Undetected;
+		}
 
-            if (gpuCode.Trim().StartsWith("GF")) return Architecture.Fermi;
-            if (gpuCode.Trim().StartsWith("GK")) return Architecture.Kepler;
-            if (gpuCode.Trim().StartsWith("GM")) return Architecture.Maxwell;
-            if (gpuCode.Trim().StartsWith("GP")) return Architecture.Pascal;
-            if (gpuCode.Trim().StartsWith("TU")) return Architecture.Turing;
-            if (gpuCode.Trim().StartsWith("GA")) return Architecture.Ampere;
+		public static void RefreshVram()
+		{
+			if(Form.ActiveForm != Program.mainForm) // Don't refresh if not in focu
+				{ return; }
 
-            return Architecture.Undetected;
-        }
+			List<string> gpusWithVram = new List<string>();
 
-        public static void RefreshVram ()
-        {
-            if (Form.ActiveForm != Program.mainForm) // Don't refresh if not in focu
-                return;
+			foreach(PhysicalGPU gpu in gpuList){
+				if(gpu == null){ continue; }
 
-            List<string> gpusWithVram = new List<string>();
+				float vramGb = (gpu.MemoryInformation.AvailableDedicatedVideoMemoryInkB / 1000f / 1024f);
+				float vramFreeGb = (gpu.MemoryInformation.CurrentAvailableDedicatedVideoMemoryInkB / 1000f / 1024f);
+				string shortenedName = gpu.FullName.Replace("NVIDIA ", "").Replace("AMD ", "");
 
-            foreach(PhysicalGPU gpu in gpuList)
-            {
-                if (gpu == null)
-                    continue;
+				gpusWithVram.Add($"{shortenedName}: {vramFreeGb.ToString("0.0")}/{vramGb.ToString("0.0")} GB Free");
+			}
 
-                float vramGb = (gpu.MemoryInformation.AvailableDedicatedVideoMemoryInkB / 1000f / 1024f);
-                float vramFreeGb = (gpu.MemoryInformation.CurrentAvailableDedicatedVideoMemoryInkB / 1000f / 1024f);
-                string shortenedName = gpu.FullName.Replace("NVIDIA ", "").Replace("AMD ", "");
+			Program.mainForm.SetVramLabel(string.Join(" - ", gpusWithVram), Color.White);
+		}
 
-                gpusWithVram.Add($"{shortenedName}: {vramFreeGb.ToString("0.0")}/{vramGb.ToString("0.0")} GB Free");
-            }
+		public static string GetFirstGpuName()
+		{
+			try {
+				NVIDIA.Initialize();
+				PhysicalGPU[] gpus = PhysicalGPU.GetPhysicalGPUs();
 
-            Program.mainForm.SetVramLabel(string.Join(" - ", gpusWithVram), Color.White);
-        }
+				if(gpus.Length == 0){ return ""; }
 
-        public static string GetFirstGpuName ()
-        {
-            try
-            {
-                NVIDIA.Initialize();
-                PhysicalGPU[] gpus = PhysicalGPU.GetPhysicalGPUs();
-
-                if (gpus.Length == 0)
-                    return "";
-
-                return gpus[0].FullName;
-            }
-            catch
-            {
-                return "";
-            }
-        }
-    }
+				return gpus[0].FullName;
+			} catch {
+				return "";
+			}
+		}
+	}
 }

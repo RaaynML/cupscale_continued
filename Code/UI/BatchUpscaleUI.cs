@@ -49,7 +49,7 @@ namespace Cupscale.UI
             currentParentDir = path.Trim();
             currentInFiles = null;
             Program.lastDirPath = currentInDir;
-            if (noGui) return;
+            if(noGui) return;
             outDir.Text = path;
             string[] files = Directory.GetFiles(currentInDir, "*", SearchOption.AllDirectories).Where(file => IoUtils.compatibleExtensions.Any(x => file.EndsWith(x, StringComparison.OrdinalIgnoreCase))).ToArray();
             FillFileList(files, true);
@@ -68,7 +68,7 @@ namespace Cupscale.UI
             TabSelected();
         }
 
-        public static void Reset ()
+        public static void Reset()
         {
             multiImgMode = false;
             outDir.Text = defaultOutStr;
@@ -78,16 +78,16 @@ namespace Cupscale.UI
             currentInFiles = null;
         }
 
-        public static void TabSelected ()
+        public static void TabSelected()
         {
-            if (!outDir.Visible)
+            if(!outDir.Visible)
                 return;
-            if (string.IsNullOrWhiteSpace(currentInDir))
+            if(string.IsNullOrWhiteSpace(currentInDir))
             {
                 Program.mainForm.SetButtonText("Upscale Images");
                 return;
             }
-            if (multiImgMode)
+            if(multiImgMode)
             {
                 int compatFilesAmount = IoUtils.GetAmountOfCompatibleFiles(currentInFiles);
                 titleLabel.Text = "Loaded " + compatFilesAmount + " compatible files.";
@@ -113,9 +113,9 @@ namespace Cupscale.UI
                     File.Copy(img, Path.Combine(Paths.imgInPath, Path.GetFileName(img)));
                     i++;
                     float prog = -1f;
-                    if (targetAmount > 0)
+                    if(targetAmount > 0)
                         prog = ((float)i / targetAmount) * 100f;
-                    if (i % 20 == 0) Program.mainForm.SetProgress(prog, $"Copied {i} images...");
+                    if(i % 20 == 0) Program.mainForm.SetProgress(prog, $"Copied {i} images...");
                 }
                 await Task.Delay(1);
             }
@@ -128,7 +128,7 @@ namespace Cupscale.UI
 
             foreach (string file in files)
             {
-                if (relativePath)
+                if(relativePath)
                 {
                     string relPath = file.Replace(@"\", "/").Replace(currentParentDir.Replace(@"\", "/"), "");
                     text = text + "Root" + relPath + Environment.NewLine;
@@ -149,18 +149,18 @@ namespace Cupscale.UI
             bool useCpu = (cudaFallback == 1);
 
             string imgOutDir = outDir.Text.Trim();
-            if (!string.IsNullOrWhiteSpace(overrideOutDir)) imgOutDir = overrideOutDir;
+            if(!string.IsNullOrWhiteSpace(overrideOutDir)) imgOutDir = overrideOutDir;
 
-            if (!PreviewUi.HasValidModelSelection())
+            if(!PreviewUi.HasValidModelSelection())
                 return;
 
-            if (string.IsNullOrWhiteSpace(currentInDir) && (currentInFiles == null || currentInFiles.Length < 1))
+            if(string.IsNullOrWhiteSpace(currentInDir) && (currentInFiles == null || currentInFiles.Length < 1))
             {
                 Program.ShowMessage("No directory or files loaded.", "Error");
                 return;
             }
 
-            if (!IoUtils.HasEnoughDiskSpace((int)(IoUtils.GetDirSize(Paths.imgInPath) / 1024 / 1024), imgOutDir.Substring(0, 2), 2.0f) )
+            if(!IoUtils.HasEnoughDiskSpace((int)(IoUtils.GetDirSize(Paths.imgInPath) / 1024 / 1024), imgOutDir.Substring(0, 2), 2.0f) )
             {
                 Program.ShowMessage($"Not enough disk space on {Paths.GetDataPath().Substring(0, 3)} to store temporary files!", "Error");
                 return;
@@ -174,7 +174,7 @@ namespace Cupscale.UI
             await CopyCompatibleImagesToTemp();
             Program.mainForm.SetProgress(3f, "Pre-Processing...");
 
-            if (preprocess)
+            if(preprocess)
                 await ImageProcessing.PreProcessImages(Paths.imgInPath, !bool.Parse(Config.Get("alpha")));
             else
                 IoUtils.AppendToFilenames(Paths.imgInPath, ".png");
@@ -188,7 +188,7 @@ namespace Cupscale.UI
             List<Task> tasks = new List<Task>();
             tasks.Add(Upscale.Run(Paths.imgInPath, Paths.imgOutPath, mdl, cacheSplitDepth, bool.Parse(Config.Get("alpha")), PreviewUi.PreviewMode.None, false));
             
-            if (postProcess)
+            if(postProcess)
             {
                 tasks.Add(PostProcessingQueue.Update());
                 tasks.Add(PostProcessingQueue.ProcessQueue());
@@ -208,13 +208,13 @@ namespace Cupscale.UI
         public static async void GetProgress (string outdir, int target)
         {
             upscaledImages = 0;
-            while (Program.busy)
+            while(Program.busy)
             {
-                if (Directory.Exists(outdir))
+                if(Directory.Exists(outdir))
                 {
                     float percentage = (float)upscaledImages / target;
                     percentage = percentage * 100f;
-                    if (percentage >= 100f)
+                    if(percentage >= 100f)
                         break;
                     if(upscaledImages > 0)
                         Program.mainForm.SetProgress((int)Math.Round(percentage), "Upscaled " + upscaledImages + "/" + target + " images");
@@ -229,13 +229,13 @@ namespace Cupscale.UI
             IoUtils.ClearDir(Paths.imgOutPath);
             Logger.Log("currentInDir: " + currentInDir + ", imgInPath: " + Paths.imgInPath);
 
-            if (currentInDir == Paths.imgInPath)    // Skip if we are directly upscaling the img-in folder
+            if(currentInDir == Paths.imgInPath)    // Skip if we are directly upscaling the img-in folder
                 return;
 
             Logger.Log($"Clearing '{Paths.imgInPath}'");
             IoUtils.ClearDir(Paths.imgInPath);
 
-            if (multiImgMode)
+            if(multiImgMode)
                 await CopyImages(currentInFiles);
             else
                 await IoUtils.CopyDir(currentInDir, Paths.imgInPath, "*", false, true);

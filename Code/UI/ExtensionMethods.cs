@@ -16,24 +16,33 @@ namespace Cupscale.UI
 	{
 		public static string TrimNumbers(this string s, bool allowDotComma = false)
 		{
-			if (!allowDotComma)
+			if(!allowDotComma){
 				s = Regex.Replace(s, "[^0-9]", "");
-			else
+			} else {
 				s = Regex.Replace(s, "[^.,0-9]", "");
+			}
 			return s.Trim();
 		}
 
 		public static int GetInt(this string str)
 		{
-			if (str.Length < 1 || str == null)
-				return 0;
+			if(str.Length < 1 || str == null){ return 0; }
 
-			try
-			{
+			try {
 				return int.Parse(str.TrimNumbers());
+			} catch (Exception e){
+				Logger.Log("Failed to parse \"" + str + "\" to int: " + e.Message);
+				return 0;
 			}
-			catch (Exception e)
-			{
+		}
+
+		public static uint GetUInt(this string str)
+		{
+			if (str.Length < 1 || str == null){ return 0; }
+
+			try {
+				return uint.Parse(str.TrimNumbers());
+			} catch (Exception e){
 				Logger.Log("Failed to parse \"" + str + "\" to int: " + e.Message);
 				return 0;
 			}
@@ -51,12 +60,9 @@ namespace Cupscale.UI
 
 		public static bool GetBool(this string str)
 		{
-			try
-			{
+			try {
 				return bool.Parse(str);
-			}
-			catch
-			{
+			} catch {
 				return false;
 			}
 		}
@@ -73,8 +79,7 @@ namespace Cupscale.UI
 
 		public static float GetFloat(this string str)
 		{
-			if (str.Length < 1 || str == null)
-				return 0f;
+			if(str.Length < 1 || str == null){ return 0f; }
 
 			string num = str.TrimNumbers(true).Replace(",", ".");
 			float value;
@@ -104,19 +109,18 @@ namespace Cupscale.UI
 
 		public static string ToStringDot(this float f, string format = "")
 		{
-			if (string.IsNullOrWhiteSpace(format))
+			if(string.IsNullOrWhiteSpace(format)){
 				return f.ToString().Replace(",", ".");
-			else
+			} else {
 				return f.ToString(format).Replace(",", ".");
+			}
 		}
 
 		public static string Wrap (this string path, bool addSpaceFront = false, bool addSpaceEnd = false)
 		{
 			string s = "\"" + path + "\"";
-			if (addSpaceFront)
-				s =  " " + s;
-			if (addSpaceEnd)
-				s = s + " ";
+			if(addSpaceFront){ s = " " + s; }
+			if(addSpaceEnd){ s = s + " "; }
 			return s;
 		}
 
@@ -124,11 +128,13 @@ namespace Cupscale.UI
         {
 			string ext = Path.GetExtension(path);
 			string newFilename = Path.GetFileNameWithoutExtension(path).Replace(textToFind, textToReplace);
-			if (includeExtension)
+			if(includeExtension){
 				newFilename = Path.GetFileName(path).Replace(textToFind, textToReplace);
+			}
 			string targetPath = Path.Combine(Path.GetDirectoryName(path), newFilename);
-			if (!includeExtension)
+			if(!includeExtension){
 				targetPath += ext;
+			}
 			return targetPath;
 		}
 
@@ -156,28 +162,23 @@ namespace Cupscale.UI
 
 		public static int Clamp (this int i, int min, int max)
         {
-			if (i < min)
-				i = min;
-			if (i > max)
-				i = max;
+			if(i < min){ i = min; }
+			if(i > max){ i = max; }
 			return i;
 		}
 
 		public static string TrimWhitespaces(this string str)
 		{
-			if (str == null) return str;
+			if(str == null){ return str; }
 			var newString = new StringBuilder();
 			bool previousIsWhitespace = false;
-			for (int i = 0; i < str.Length; i++)
-			{
-				if (Char.IsWhiteSpace(str[i]))
-				{
-					if (previousIsWhitespace)
+			for (int i = 0; i < str.Length; i++){
+				if(Char.IsWhiteSpace(str[i])){
+					if(previousIsWhitespace){
 						continue;
+					}
 					previousIsWhitespace = true;
-				}
-				else
-				{
+				} else {
 					previousIsWhitespace = false;
 				}
 				newString.Append(str[i]);
@@ -193,8 +194,9 @@ namespace Cupscale.UI
 		public static string Trunc(this string inStr, int maxChars, bool addEllipsis = true)
 		{
 			string str = inStr.Length <= maxChars ? inStr : inStr.Substring(0, maxChars);
-			if (addEllipsis && inStr.Length > maxChars)
+			if(addEllipsis && inStr.Length > maxChars){
 				str += "…";
+			}
 			return str;
 		}
 	}

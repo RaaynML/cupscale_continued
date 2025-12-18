@@ -42,7 +42,7 @@ namespace Cupscale.Forms
             UpdateLabels();
         }
 
-        void UpdateLabels ()
+        void UpdateLabels()
         {
             leftModelLabel.Text = leftModelName + ": " + (100 - interpSlider.Value * 5) + "%";
             rightModelLabel.Text = rightModelName + ": " + interpSlider.Value * 5 + "%";

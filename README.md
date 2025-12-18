@@ -37,12 +37,12 @@ Temporary files are stored in the installation directory by default, which is wh
 ## Features:
 
 - CUDA, Vulkan/NCNN or CPU supported, with included model converter for NCNN
-- On-the-fly Model Interpolation
+- Model Interpolation
 - Model Chaining (Run images through multiple models at once)
 - Batch Upscaling (Load a directory or multiple single images)
 - Automatic Image tiling/merging to avoid running out of VRAM
 - Pre-Processing: Optionally downscale images before upscaling
 - Post-Processing: Automatically resize after upscaling
 - Compatible with PNG, JPEG, BMP, WEBP, TGA, DDS images
-- Load image straight out of the clipboard (no need to download images from web)
-- Create various types of comparisons (Side-By-Side, 50/50, and before/after animations as GIF or MP4)
+- Loading an image from the clipboard (no need to download images from web)
+- Various types of comparisons (Side-By-Side, 50/50, and before/after animations as GIF or MP4)

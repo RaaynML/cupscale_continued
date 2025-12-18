@@ -59,33 +59,33 @@ namespace Cupscale.IO
 			Directory.CreateDirectory(framesOutPath);
 		}
 
-        public static string GetDataPath()
-        {
-            string path = Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData);
-            path = Path.Combine(path, "Cupscale");
+		public static string GetDataPath()
+		{
+			string path = Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData);
+			path = Path.Combine(path, "Cupscale");
 
-            if (IoUtils.IsPortable())
-            {
-                if (!IoUtils.hasShownPortableInfo)
-                {
-                    Logger.Log("Running in portable mode. Data folder: " + Path.Combine(GetExeDir(), "CupscaleData"), false);
-                    IoUtils.hasShownPortableInfo = true;
-                }
-                path = Path.Combine(GetExeDir(), "CupscaleData");
-            }
+			if(IoUtils.IsPortable())
+			{
+				if(!IoUtils.hasShownPortableInfo)
+				{
+					Logger.Log("Running in portable mode. Data folder: " + Path.Combine(GetExeDir(), "CupscaleData"), false);
+					IoUtils.hasShownPortableInfo = true;
+				}
+				path = Path.Combine(GetExeDir(), "CupscaleData");
+			}
 
-            Directory.CreateDirectory(path);
-            return path;
-        }
+			Directory.CreateDirectory(path);
+			return path;
+		}
 
-        public static string GetExeDir()
-        {
-            return AppDomain.CurrentDomain.BaseDirectory;
-        }
+		public static string GetExeDir()
+		{
+			return AppDomain.CurrentDomain.BaseDirectory;
+		}
 
 		public static string GetAiDir (Implementations.Implementation impl)
-        {
+		{
 			return Path.Combine(binPath, impl.dir);
-        }
-    }
+		}
+	}
 }

@@ -57,7 +57,7 @@ namespace Cupscale.UI
 
         public static async Task UpscaleImage()
         {
-            if (previewImg.Image == null)
+            if(previewImg.Image == null)
             {
                 Program.ShowMessage("Please load an image first!", "Error");
                 return;
@@ -69,7 +69,7 @@ namespace Cupscale.UI
             Program.mainForm.SetProgress(3f, "Preprocessing...");
             string inImg = CopyImage();
 
-            if (inImg == null)  // Try to copy/move image to input folder, return if failed
+            if(inImg == null)  // Try to copy/move image to input folder, return if failed
             {
                 Cancel("I/O Error");
                 return;
@@ -84,7 +84,7 @@ namespace Cupscale.UI
             try
             {
                 await Upscale.Run(Paths.imgInPath, Paths.imgOutPath, mdl, false, Config.GetBool("alpha"), PreviewMode.None);
-                if (Program.canceled) return;
+                if(Program.canceled) return;
                 outImg = Upscale.GetOutputImg();
                 Program.mainForm.SetProgress(100f, "Post-Processing...");
                 await Task.Delay(50);
@@ -95,14 +95,14 @@ namespace Cupscale.UI
             catch (Exception e)
             {
                 Program.mainForm.SetProgress(0f, "Cancelled.");
-                if (Program.canceled)
+                if(Program.canceled)
                     return;
-                if (e.StackTrace.Contains("Index"))
+                if(e.StackTrace.Contains("Index"))
                     Program.ShowMessage("The upscale process seems to have exited before completion!", "Error");
                 Logger.ErrorMessage("An error occured during upscaling:", e);
             }
 
-            if (!Program.canceled)
+            if(!Program.canceled)
                 Program.mainForm.SetProgress(0, $"Done - Upscaling took {(sw.ElapsedMilliseconds / 1000f).ToString("0.0")}s");
 
             Program.mainForm.SetBusy(false);
@@ -110,7 +110,7 @@ namespace Cupscale.UI
 
         static void Cancel(string reason = "")
         {
-            if (string.IsNullOrWhiteSpace(reason))
+            if(string.IsNullOrWhiteSpace(reason))
                 Program.mainForm.SetProgress(0f, "Cancelled.");
             else
                 Program.mainForm.SetProgress(0f, "Cancelled: " + reason);
@@ -127,38 +127,38 @@ namespace Cupscale.UI
             Implementations.Implementation ai = Upscale.currentAi;
             bool ncnn = ai == Implementations.Imps.esrganNcnn || ai == Implementations.Imps.realEsrganNcnn;
 
-            if (ai == Implementations.Imps.esrganPytorch)
+            if(ai == Implementations.Imps.esrganPytorch)
             {
                 bool valid = true;
 
-                if (NcnnUtils.IsDirNcnnModel(Program.currentModel1) || NcnnUtils.IsDirNcnnModel(Program.currentModel2))
+                if(NcnnUtils.IsDirNcnnModel(Program.currentModel1) || NcnnUtils.IsDirNcnnModel(Program.currentModel2))
                     valid = false;  // NCNN models not compatible with pytorch
 
-                if (!valid && showErrorMsgsIfInvalid)
+                if(!valid && showErrorMsgsIfInvalid)
                 {
                     Program.ShowMessage("Invalid model selection - You have selected one or more models that are not compatible with this implementation!", "Error");
                     return false;
                 }
 
-                if (model1.Enabled && !File.Exists(Program.currentModel1))
+                if(model1.Enabled && !File.Exists(Program.currentModel1))
                     valid = false;
-                if (model2.Enabled && !File.Exists(Program.currentModel2))
+                if(model2.Enabled && !File.Exists(Program.currentModel2))
                     valid = false;
 
-                if (!valid && showErrorMsgsIfInvalid)
+                if(!valid && showErrorMsgsIfInvalid)
                     Program.ShowMessage("Invalid model selection.\nMake sure you have selected a model and that the file still exists.", "Error");
 
                 return valid;
             }
 
-            if (ncnn)
+            if(ncnn)
             {
                 bool valid = true;
 
-                if (!Program.mainForm.IsSingleModleMode())
+                if(!Program.mainForm.IsSingleModleMode())
                     valid = false;
 
-                if (!valid && showErrorMsgsIfInvalid)
+                if(!valid && showErrorMsgsIfInvalid)
                 {
                     Program.ShowMessage("Invalid model selection - NCNN does not support interpolation or chaining.", "Error");
                     return false;
@@ -188,7 +188,7 @@ namespace Cupscale.UI
 
         public static async void UpscalePreview(bool fullImage = false)
         {
-            if (!HasValidModelSelection())
+            if(!HasValidModelSelection())
                 return;
 
             Upscale.currentMode = Upscale.UpscaleMode.Preview;
@@ -202,10 +202,10 @@ namespace Cupscale.UI
             IoUtils.ClearDir(Paths.previewOutPath);
             PreviewUi.PreviewMode prevMode = PreviewUi.PreviewMode.Cutout;
 
-            if (fullImage)
+            if(fullImage)
             {
                 prevMode = PreviewUi.PreviewMode.FullImage;
-                if (!IoUtils.TryCopy(Paths.tempImgPath, Path.Combine(Paths.previewPath, "preview.png"), true)) return;
+                if(!IoUtils.TryCopy(Paths.tempImgPath, Path.Combine(Paths.previewPath, "preview.png"), true)) return;
             }
             else
             {
@@ -221,32 +221,32 @@ namespace Cupscale.UI
 
             ModelData mdl = new ModelData();
 
-            if (Upscale.currentAi.supportsModels)
+            if(Upscale.currentAi.supportsModels)
             {
-                if (currentMode == MdlMode.Single)
+                if(currentMode == MdlMode.Single)
                 {
                     string mdl1 = Program.currentModel1;
-                    if (string.IsNullOrWhiteSpace(mdl1)) return;
+                    if(string.IsNullOrWhiteSpace(mdl1)) return;
                     mdl = new ModelData(mdl1, null, ModelData.ModelMode.Single);
                 }
 
-                if (currentMode == MdlMode.Interp)
+                if(currentMode == MdlMode.Interp)
                 {
                     string mdl1 = Program.currentModel1;
                     string mdl2 = Program.currentModel2;
-                    if (string.IsNullOrWhiteSpace(mdl1) || string.IsNullOrWhiteSpace(mdl2)) return;
+                    if(string.IsNullOrWhiteSpace(mdl1) || string.IsNullOrWhiteSpace(mdl2)) return;
                     mdl = new ModelData(mdl1, mdl2, ModelData.ModelMode.Interp, interpValue);
                 }
 
-                if (currentMode == MdlMode.Chain)
+                if(currentMode == MdlMode.Chain)
                 {
                     string mdl1 = Program.currentModel1;
                     string mdl2 = Program.currentModel2;
-                    if (string.IsNullOrWhiteSpace(mdl1) || string.IsNullOrWhiteSpace(mdl2)) return;
+                    if(string.IsNullOrWhiteSpace(mdl1) || string.IsNullOrWhiteSpace(mdl2)) return;
                     mdl = new ModelData(mdl1, mdl2, ModelData.ModelMode.Chain);
                 }
 
-                if (currentMode == MdlMode.Advanced)
+                if(currentMode == MdlMode.Advanced)
                 {
                     mdl = new ModelData(null, null, ModelData.ModelMode.Advanced);
                 }
@@ -254,7 +254,7 @@ namespace Cupscale.UI
 
             await Upscale.Run(Paths.previewPath, Paths.previewOutPath, mdl, false, alpha, prevMode);
 
-            if (!Program.canceled)
+            if(!Program.canceled)
                 Program.mainForm.SetProgress(0, $"Done - Upscaling took {(sw.ElapsedMilliseconds / 1000f).ToString("0.0")}s");
             
             Program.mainForm.SetBusy(false);
@@ -262,7 +262,7 @@ namespace Cupscale.UI
 
         public static async Task ScalePreviewOutput()
         {
-            if (ImageProcessing.postScaleMode == Upscale.ScaleMode.Percent && ImageProcessing.postScaleValue == 100)   // Skip if target scale is 100%)
+            if(ImageProcessing.postScaleMode == Upscale.ScaleMode.Percent && ImageProcessing.postScaleValue == 100)   // Skip if target scale is 100%)
                 return;
 
             Program.mainForm.SetProgress(1f, "Resizing preview output...");
@@ -297,11 +297,11 @@ namespace Cupscale.UI
             Logger.Log("[MainUI] Saving current region to bitmap. Offset: " + previewImg.AutoScrollPosition.X + "x" + previewImg.AutoScrollPosition.Y);
             PreviewMerger.offsetX = (float)previewImg.AutoScrollPosition.X / (float)previewImg.ZoomFactor;
             PreviewMerger.offsetY = (float)previewImg.AutoScrollPosition.Y / (float)previewImg.ZoomFactor;
-            if (num5 <= size.Width)
+            if(num5 <= size.Width)
             {
                 num3 = 0;
             }
-            if (num6 <= size.Height)
+            if(num6 <= size.Height)
             {
                 num4 = 0;
             }
@@ -349,7 +349,7 @@ namespace Cupscale.UI
             try
             {
                 MagickImage img = ImgUtils.GetMagickImage(path);
-                if (img.Width > 8192 || img.Height > 8192)
+                if(img.Width > 8192 || img.Height > 8192)
                 {
                     Program.ShowMessage("Image is too big for the preview!\nPlease use images with less than 8192 pixels on either side.", "Error");
                     return false;
@@ -365,7 +365,7 @@ namespace Cupscale.UI
 
         public static void OpenLastOutputFolder()
         {
-            if (!string.IsNullOrWhiteSpace(Program.lastOutputDir))
+            if(!string.IsNullOrWhiteSpace(Program.lastOutputDir))
                 Process.Start("explorer.exe", Program.lastOutputDir);
         }
 
@@ -398,17 +398,17 @@ namespace Cupscale.UI
                 {
                     string line = lines[i];
                     string[] values = line.Split(',');
-                    if (i == 0 || line.Length < 10 || values.Length < 5) continue;
+                    if(i == 0 || line.Length < 10 || values.Length < 5) continue;
                     string name = values[0].Trim();
                     string status = values[4].Trim();
                     string tier = values[9].Trim();
 
-                    if (status.Contains("Active"))
+                    if(status.Contains("Active"))
                     {
-                        if (tier.Contains("Gold"))
+                        if(tier.Contains("Gold"))
                             goldPatrons.Add(name.Split('(')[0].Trunc(30));
 
-                        if (tier.Contains("Silver"))
+                        if(tier.Contains("Silver"))
                             silverPatrons.Add(name.Split('(')[0].Trunc(30));
                     }
                 }

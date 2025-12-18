@@ -17,15 +17,12 @@ namespace Cupscale.Main
 
             string graphicsCard = string.Empty;
 
-            foreach (ManagementObject mo in searcher.Get())
-            {
-                foreach (PropertyData property in mo.Properties)
-                {
-                    if (property.Name == "Description")
-                    {
+            foreach (ManagementObject mo in searcher.Get()){
+                foreach (PropertyData property in mo.Properties){
+                    if(property.Name == "Description"){
                         graphicsCard = property.Value.ToString();
-                        if (string.IsNullOrWhiteSpace(graphicsCard) || graphicsCard.ToLower().Contains("microsoft"))
-                            return false;
+                        if(string.IsNullOrWhiteSpace(graphicsCard) || graphicsCard.ToLower().Contains("microsoft"))
+                            { return false; }
                         Logger.Log("[DepCheck] Found GPU: " + graphicsCard);
                         return true;
                     }
@@ -36,12 +33,12 @@ namespace Cupscale.Main
             return false;
         }
 
-        public static bool SysPyAvail ()
+        public static bool SysPyAvail()
         {
             string sysPyVer = GetSysPyVersion();
 
-            if (!string.IsNullOrWhiteSpace(sysPyVer) && !sysPyVer.ToLower().Contains("not found") && sysPyVer.Length <= 35)
-                return true;
+            if(!string.IsNullOrWhiteSpace(sysPyVer) && !sysPyVer.ToLower().Contains("not found") && sysPyVer.Length <= 35)
+               { return true; }
 
             return false;
         }
@@ -51,14 +48,11 @@ namespace Cupscale.Main
             string pythonOut = GetSysPythonOutput();
             Logger.Log("[DepCheck] System Python Check Output: " + pythonOut.Trim());
 
-            try
-            {
+            try {
                 string ver = pythonOut.Split('(')[0].Trim();
                 Logger.Log("[DepCheck] Sys Python Ver: " + ver);
                 return ver;
-            }
-            catch
-            {
+            } catch {
                 return "";
             }
         }
@@ -67,8 +61,8 @@ namespace Cupscale.Main
         {
             string embedPyVer = GetEmbedPyVersion();
 
-            if (!string.IsNullOrWhiteSpace(embedPyVer) && !embedPyVer.ToLower().Contains("not found") && embedPyVer.Length <= 35)
-                return true;
+            if(!string.IsNullOrWhiteSpace(embedPyVer) && !embedPyVer.ToLower().Contains("not found") && embedPyVer.Length <= 35)
+                { return true; }
 
             return false;
         }
@@ -78,14 +72,11 @@ namespace Cupscale.Main
             string pythonOut = GetEmbedPythonOutput();
             Logger.Log("[DepCheck] Embed Python Check Output: " + pythonOut.Trim());
 
-            try
-            {
+            try {
                 string ver = pythonOut.Split('(')[0].Trim();
                 Logger.Log("[DepCheck] Embed Python Ver: " + ver);
                 return ver;
-            }
-            catch
-            {
+            } catch {
                 return "";
             }
         }
@@ -111,14 +102,13 @@ namespace Cupscale.Main
             py.WaitForExit();
             string output = py.StandardOutput.ReadToEnd();
             string err = py.StandardError.ReadToEnd();
-            if (!string.IsNullOrWhiteSpace(err)) output += "\n" + err;
+            if(!string.IsNullOrWhiteSpace(err)){ output += "\n" + err; }
             return output;
         }
 
         public static string GetPytorchVer()
         {
-            try
-            {
+            try {
                 Process py = OsUtils.NewProcess(true);
                 py.StartInfo.Arguments = "\"/C\" " + EmbeddedPython.GetPyCmd() + " -c \"import torch; print(torch.__version__)\"";
                 Logger.Log("[DepCheck] CMD: " + py.StartInfo.Arguments);
@@ -126,20 +116,17 @@ namespace Cupscale.Main
                 py.WaitForExit();
                 string output = py.StandardOutput.ReadToEnd();
                 string err = py.StandardError.ReadToEnd();
-                if (!string.IsNullOrWhiteSpace(err)) output += "\n" + err;
+                if(!string.IsNullOrWhiteSpace(err)) output += "\n" + err;
                 Logger.Log("[DepCheck] Pytorch Check Output: " + output.Trim());
                 return output;
-            }
-            catch
-            {
+            } catch {
                 return "";
             }
         }
 
         public static string GetOpenCvVer()
         {
-            try
-            {
+            try {
                 Process py = OsUtils.NewProcess(true);
                 py.StartInfo.Arguments = "\"/C\" " + EmbeddedPython.GetPyCmd() + " -c \"import cv2; print(cv2.__version__)\"";
                 Logger.Log("[DepCheck] CMD: " + py.StartInfo.Arguments);
@@ -147,12 +134,10 @@ namespace Cupscale.Main
                 py.WaitForExit();
                 string output = py.StandardOutput.ReadToEnd();
                 string err = py.StandardError.ReadToEnd();
-                if (!string.IsNullOrWhiteSpace(err)) output += "\n" + err;
+                if(!string.IsNullOrWhiteSpace(err)){ output += "\n" + err; }
                 Logger.Log("[DepCheck] CV2 Check Output: " + output.Trim());
                 return output;
-            }
-            catch
-            {
+            } catch {
                 return "";
             }
         }

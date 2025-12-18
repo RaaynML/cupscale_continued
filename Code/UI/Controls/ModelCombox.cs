@@ -13,7 +13,7 @@ namespace System.Windows.Forms
 
         //bool initialized = false;
 
-        public ModelCombox ()   // Constructor
+        public ModelCombox()   // Constructor
         {
             base.Text = "Open the dropdown to select a model.";
         }
@@ -22,13 +22,13 @@ namespace System.Windows.Forms
         protected override void OnVisibleChanged(EventArgs e)
         {
 			
-            if (!IsRunning())
+            if(!IsRunning())
                 return;
             base.Text = "running";
 
             base.OnVisibleChanged(e);
 
-            if (!initialized)
+            if(!initialized)
             {
             UIHelpers.FillModelComboBox(this, false);
             initialized = true;
@@ -39,7 +39,7 @@ namespace System.Windows.Forms
 
         protected override void OnDropDown(EventArgs e)
         {
-            // if (!IsRunning())
+            // if(!IsRunning())
             //    return;
             base.OnDropDown(e);
             Cupscale.UiHelpers.FillModelComboBox(this, false);

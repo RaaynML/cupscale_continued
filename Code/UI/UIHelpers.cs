@@ -14,7 +14,7 @@ namespace Cupscale
 	{
 		public static void InitCombox(ComboBox box, int index)
 		{
-			if (box.Items.Count >= 1)
+			if(box.Items.Count >= 1)
 			{
 				box.SelectedIndex = index;
 				box.Text = box.Items[index].ToString();
@@ -29,7 +29,7 @@ namespace Cupscale
 			{
 				box.Items.Add(model);
 			}
-			if (resetIndex || string.IsNullOrEmpty(box.Text))
+			if(resetIndex || string.IsNullOrEmpty(box.Text))
 			{
 				InitCombox(box, 0);
 			}
@@ -61,11 +61,11 @@ namespace Cupscale
 			float num = (float)imgBox.Image.Width / (float)newImg.Width;
 			float num2 = (float)imgBox.AutoScrollPosition.X / num;
 			float num3 = (float)imgBox.AutoScrollPosition.Y / num;
-			if (num2 < 0f)
+			if(num2 < 0f)
 			{
 				num2 *= -1f;
 			}
-			if (num3 < 0f)
+			if(num3 < 0f)
 			{
 				num3 *= -1f;
 			}

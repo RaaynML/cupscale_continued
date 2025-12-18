@@ -36,22 +36,22 @@ namespace Cupscale.Cupscale
             run = true;
         }
 
-        public static void Stop ()
+        public static void Stop()
         {
             Logger.Log("[Queue] Stop()");
             run = false;
         }
 
-        public static async Task Update ()
+        public static async Task Update()
         {
-            while (run || AnyFilesLeft())
+            while(run || AnyFilesLeft())
             {
                 CheckNcnnOutput();
                 string[] outFiles = Directory.GetFiles(Paths.imgOutPath, "*.tmp", SearchOption.AllDirectories);
 
                 foreach (string file in outFiles)
                 {
-                    if (!outputFileQueue.Contains(file) && !processedFiles.Contains(file) && !outputFiles.Contains(file))
+                    if(!outputFileQueue.Contains(file) && !processedFiles.Contains(file) && !outputFiles.Contains(file))
                     {
                         //processedFiles.Add(file);
                         outputFileQueue.Enqueue(file);
@@ -63,9 +63,9 @@ namespace Cupscale.Cupscale
             }
         }
 
-        static bool AnyFilesLeft ()
+        static bool AnyFilesLeft()
         {
-            if (IoUtils.GetAmountOfFiles(Paths.imgOutPath, true) > 0)
+            if(IoUtils.GetAmountOfFiles(Paths.imgOutPath, true) > 0)
                 return true;
 
             return false;
@@ -73,20 +73,20 @@ namespace Cupscale.Cupscale
 
         public static string lastOutfile;
         
-        public static async Task ProcessQueue ()
+        public static async Task ProcessQueue()
         {
             Stopwatch sw = new Stopwatch();
 
-            while (!Program.canceled && (run || AnyFilesLeft()))
+            while(!Program.canceled && (run || AnyFilesLeft()))
             {
-                if (outputFileQueue.Count > 0)
+                if(outputFileQueue.Count > 0)
                 {
                     string file = outputFileQueue.Dequeue();
                     Logger.Log("[Queue] Post-Processing " + Path.GetFileName(file));
                     sw.Restart();
                     await PostProcessing.PostprocessingSingle(file, false);
 
-                    while (IoUtils.IsFileLocked(lastOutfile))
+                    while(IoUtils.IsFileLocked(lastOutfile))
                     {
                         Logger.Log($"{file} appears to be locked - waiting 500ms...");
                         await Task.Delay(500);
@@ -105,17 +105,17 @@ namespace Cupscale.Cupscale
 
                     try
                     {
-                        if (Upscale.overwriteMode == Upscale.Overwrite.Yes)
+                        if(Upscale.overwriteMode == Upscale.Overwrite.Yes)
                         {
                             string suffixToRemove = "-" + Program.lastModelName.Replace(":", ".").Replace(">>", "+");
 
-                            if (copyMode == CopyMode.KeepStructure)
+                            if(copyMode == CopyMode.KeepStructure)
                             {
                                 string combinedPath = currentOutPath + outFilename.Replace(Paths.imgOutPath, "");
                                 Directory.CreateDirectory(combinedPath.GetParentDir());
                                 File.Copy(outFilename, combinedPath.ReplaceInFilename(suffixToRemove, "", true), true);
                             }
-                            if (copyMode == CopyMode.CopyToRoot)
+                            if(copyMode == CopyMode.CopyToRoot)
                             {
                                 File.Copy(outFilename, Path.Combine(currentOutPath, Path.GetFileName(outFilename).Replace(suffixToRemove, "")), true);
                             }
@@ -124,14 +124,14 @@ namespace Cupscale.Cupscale
                         }
                         else
                         {
-                            if (copyMode == CopyMode.KeepStructure)
+                            if(copyMode == CopyMode.KeepStructure)
                             {
                                 string combinedPath = currentOutPath + outFilename.Replace(Paths.imgOutPath, "");
                                 Directory.CreateDirectory(combinedPath.GetParentDir());
                                 File.Copy(outFilename, combinedPath, true);
                             }
 
-                            if (copyMode == CopyMode.CopyToRoot)
+                            if(copyMode == CopyMode.CopyToRoot)
                             {
                                 File.Copy(outFilename, Path.Combine(currentOutPath, Path.GetFileName(outFilename)), true);
                             }

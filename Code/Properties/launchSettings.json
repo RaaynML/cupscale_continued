@@ -1,0 +1,9 @@
+{
+  "profiles": {
+    "Cupscale": {
+      "commandName": "Project",
+      "nativeDebugging": true,
+      "remoteDebugEnabled": false
+    }
+  }
+}

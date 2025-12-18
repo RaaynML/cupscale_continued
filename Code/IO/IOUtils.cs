@@ -22,11 +22,11 @@ namespace Cupscale
         public static string[] videoExtensions = new string[] { ".mp4", ".m4v", ".mkv", ".webm", ".gif", ".avi" };
         public static bool hasShownPortableInfo = false;
 
-        public static bool IsPortable ()
+        public static bool IsPortable()
         {
             foreach (string arg in Environment.GetCommandLineArgs())
             {
-                if (arg == "-appdata")
+                if(arg == "-appdata")
                     return false;
             }
 
@@ -40,7 +40,7 @@ namespace Cupscale
             using (var sr = new StreamReader(fs, Encoding.UTF8))
             {
                 string line;
-                while ((line = sr.ReadLine()) != null)
+                while((line = sr.ReadLine()) != null)
                 {
                     lines.Add(line);
                 }
@@ -50,20 +50,20 @@ namespace Cupscale
 
         public static bool IsPathDirectory(string path)
         {
-            if (path == null)
+            if(path == null)
             {
                 throw new ArgumentNullException("path");
             }
             path = path.Trim();
-            if (Directory.Exists(path))
+            if(Directory.Exists(path))
             {
                 return true;
             }
-            if (File.Exists(path))
+            if(File.Exists(path))
             {
                 return false;
             }
-            if (new string[2]
+            if(new string[2]
             {
                 "\\",
                 "/"
@@ -76,10 +76,10 @@ namespace Cupscale
 
         public static bool IsFileValid(string path)
         {
-            if (path == null)
+            if(path == null)
                 return false;
 
-            if (!File.Exists(path))
+            if(!File.Exists(path))
                 return false;
 
             return true;
@@ -87,10 +87,10 @@ namespace Cupscale
 
         public static bool IsDirValid(string path)
         {
-            if (path == null)
+            if(path == null)
                 return false;
 
-            if (!Directory.Exists(path))
+            if(!Directory.Exists(path))
                 return false;
 
             return true;
@@ -98,10 +98,10 @@ namespace Cupscale
 
         public static bool IsPathValid(string path)
         {
-            if (path == null)
+            if(path == null)
                 return false;
 
-            if (IsPathDirectory(path))
+            if(IsPathDirectory(path))
                 return IsDirValid(path);
             else
                 return IsFileValid(path);
@@ -129,18 +129,18 @@ namespace Cupscale
 
             foreach (FileInfo fileInfo in files)
             {
-                if (sw.ElapsedMilliseconds > 100)
+                if(sw.ElapsedMilliseconds > 100)
                 {
                     await Task.Delay(1);
                     sw.Restart();
                 }
 
-                if (onlyCompatibles && !compatibleExtensions.Contains(fileInfo.Extension.ToLower()))
+                if(onlyCompatibles && !compatibleExtensions.Contains(fileInfo.Extension.ToLower()))
                     continue;
 
                 string targetPath = Path.Combine(target.FullName, fileInfo.Name);
 
-                if (move)
+                if(move)
                     fileInfo.MoveTo(targetPath);
                 else
                     fileInfo.CopyTo(targetPath, overwrite: true);
@@ -149,9 +149,9 @@ namespace Cupscale
 
         public static void ClearDir(string path)
         {
-            if (!Directory.Exists(path))
+            if(!Directory.Exists(path))
                 return;
-            if (Logger.doLogIo) Logger.Log("[IOUtils] Clearing " + path);
+            if(Logger.doLogIo) Logger.Log("[IOUtils] Clearing " + path);
             try
             {
                 DirectoryInfo directoryInfo = new DirectoryInfo(path);
@@ -176,13 +176,13 @@ namespace Cupscale
         {
             DirectoryInfo d = new DirectoryInfo(path);
             FileInfo[] files = null;
-            if (recursive)
+            if(recursive)
                 files = d.GetFiles("*", SearchOption.AllDirectories);
             else
                 files = d.GetFiles("*", SearchOption.TopDirectoryOnly);
             foreach (FileInfo fileInfo in files)
             {
-                if (string.IsNullOrWhiteSpace(fileInfo.Extension))
+                if(string.IsNullOrWhiteSpace(fileInfo.Extension))
                     fileInfo.Delete();
             }
         }
@@ -192,7 +192,7 @@ namespace Cupscale
             int counter = 1;
             DirectoryInfo d = new DirectoryInfo(dir);
             FileInfo[] files = null;
-            if (recursive)
+            if(recursive)
                 files = d.GetFiles(wildcard, SearchOption.AllDirectories);
             else
                 files = d.GetFiles(wildcard, SearchOption.TopDirectoryOnly);
@@ -208,7 +208,7 @@ namespace Cupscale
             string ext = Path.GetExtension(path);
             string newFilename = Path.GetFileNameWithoutExtension(path).Replace(textToFind, textToReplace);
             string targetPath = Path.Combine(Path.GetDirectoryName(path), newFilename + ext);
-            if (File.Exists(targetPath))
+            if(File.Exists(targetPath))
                 File.Delete(targetPath);
 
             File.Move(path, targetPath);
@@ -219,7 +219,7 @@ namespace Cupscale
         {
             DirectoryInfo d = new DirectoryInfo(dir);
             FileInfo[] files = null;
-            if (recursive)
+            if(recursive)
                 files = d.GetFiles(wildcard, SearchOption.AllDirectories);
             else
                 files = d.GetFiles(wildcard, SearchOption.TopDirectoryOnly);
@@ -227,10 +227,10 @@ namespace Cupscale
             string targetPath = "";
             foreach (FileInfo file in files)
             {
-                if (file.Extension.Replace(".", "") == oldExt.Replace(".", ""))
+                if(file.Extension.Replace(".", "") == oldExt.Replace(".", ""))
                 {
                     targetPath = Path.ChangeExtension(file.FullName, newExt);
-                    if (!File.Exists(targetPath))
+                    if(!File.Exists(targetPath))
                         File.Delete(targetPath);
                     File.Move(file.FullName, targetPath);
                 }
@@ -244,11 +244,11 @@ namespace Cupscale
                 string targetPath = filepath;
                 FileInfo file = new FileInfo(filepath);
 
-                if (file.Extension.Replace(".", "") == oldExt.Replace(".", ""))
+                if(file.Extension.Replace(".", "") == oldExt.Replace(".", ""))
                 {
                     targetPath = Path.ChangeExtension(file.FullName, newExt);
 
-                    if (!File.Exists(targetPath))
+                    if(!File.Exists(targetPath))
                         File.Delete(targetPath);
 
                     File.Move(file.FullName, targetPath);
@@ -267,7 +267,7 @@ namespace Cupscale
         {
             DirectoryInfo d = new DirectoryInfo(dir);
             FileInfo[] files = null;
-            if (recursive)
+            if(recursive)
                 files = d.GetFiles(wildcard, SearchOption.AllDirectories);
             else
                 files = d.GetFiles(wildcard, SearchOption.TopDirectoryOnly);
@@ -276,7 +276,7 @@ namespace Cupscale
             foreach (FileInfo file in files)
             {
                 targetPath = file.FullName + append;
-                if (!File.Exists(targetPath))
+                if(!File.Exists(targetPath))
                     File.Delete(targetPath);
                 File.Move(file.FullName, targetPath);
             }
@@ -302,7 +302,7 @@ namespace Cupscale
             {
                 DirectoryInfo d = new DirectoryInfo(path);
                 FileInfo[] files = null;
-                if (recursive)
+                if(recursive)
                     files = d.GetFiles(wildcard, SearchOption.AllDirectories);
                 else
                     files = d.GetFiles(wildcard, SearchOption.TopDirectoryOnly);
@@ -322,7 +322,7 @@ namespace Cupscale
             SearchOption top = SearchOption.TopDirectoryOnly;
             StringComparison ignCase = StringComparison.OrdinalIgnoreCase;
 
-            if (recursive)
+            if(recursive)
                 files = Directory.GetFiles(path, wildcard, rec).Where(file => compatibleExtensions.Any(x => file.EndsWith(x, ignCase))).ToArray();
             else
                 files = Directory.GetFiles(path, wildcard, top).Where(file => compatibleExtensions.Any(x => file.EndsWith(x, ignCase))).ToArray();
@@ -340,7 +340,7 @@ namespace Cupscale
             int num = 0;
             foreach (string file in files)
             {
-                if (compatibleExtensions.Contains(Path.GetExtension(file).ToLower()))
+                if(compatibleExtensions.Contains(Path.GetExtension(file).ToLower()))
                     num++;
             }
             return num;
@@ -352,7 +352,7 @@ namespace Cupscale
             // Add file sizes.
             string[] files;
             StringComparison ignCase = StringComparison.OrdinalIgnoreCase;
-            if (includedExtensions == null)
+            if(includedExtensions == null)
                 files = Directory.GetFiles(path);
             else
                 files = Directory.GetFiles(path).Where(file => includedExtensions.Any(x => file.EndsWith(x, ignCase))).ToArray();
@@ -360,7 +360,7 @@ namespace Cupscale
             foreach (string file in files)
                 size += new FileInfo(file).Length;
 
-            if (!recursive)
+            if(!recursive)
                 return size;
 
             // Add subdirectory sizes.
@@ -375,7 +375,7 @@ namespace Cupscale
         {
             DirectoryInfo d = new DirectoryInfo(path);
             FileInfo[] files = null;
-            if (recursive)
+            if(recursive)
                 files = d.GetFiles(wildcard, SearchOption.AllDirectories);
             else
                 files = d.GetFiles(wildcard, SearchOption.TopDirectoryOnly);
@@ -390,7 +390,7 @@ namespace Cupscale
         public static int GetFilenameCounterLength(string file, string prefixToRemove = "")
         {
             string filenameNoExt = Path.GetFileNameWithoutExtension(file);
-            if (!string.IsNullOrEmpty(prefixToRemove))
+            if(!string.IsNullOrEmpty(prefixToRemove))
                 filenameNoExt = filenameNoExt.Replace(prefixToRemove, "");
             string onlyNumbersFilename = Regex.Replace(filenameNoExt, "[^.0-9]", "");
             return onlyNumbersFilename.Length;
@@ -400,7 +400,7 @@ namespace Cupscale
         {
             try
             {
-                if (path == null)
+                if(path == null)
                     return false;
                 DeleteIfExists(path);
                 return true;
@@ -414,14 +414,14 @@ namespace Cupscale
 
         public static void DeleteIfExists(string path)
         {
-            if (File.Exists(path))
+            if(File.Exists(path))
                 File.Delete(path);
         }
 
         public static void PrintFilesInDir(string path, string pattern = "*.*", bool recursive = true)
         {
             SearchOption searchOpt = SearchOption.TopDirectoryOnly;
-            if (recursive)
+            if(recursive)
                 searchOpt = SearchOption.AllDirectories;
 
             foreach (string file in Directory.GetFiles(path, pattern, searchOpt))
@@ -437,7 +437,7 @@ namespace Cupscale
                 File.Move(newPath, path);
                 return false;
             }
-            catch (Exception e)
+            catch (Exception)
             {
                 return true;
             }
@@ -445,7 +445,7 @@ namespace Cupscale
 
         public static long GetDirSize (string path)
         {
-            if (!Directory.Exists(path))
+            if(!Directory.Exists(path))
                 return 0;
             return GetDirSize(new DirectoryInfo(path));
         }
@@ -486,9 +486,9 @@ namespace Cupscale
                 DriveInfo[] allDrives = DriveInfo.GetDrives();
                 foreach (DriveInfo d in allDrives)
                 {
-                    if (d.IsReady == true && d.Name.StartsWith(driveLetter))
+                    if(d.IsReady == true && d.Name.StartsWith(driveLetter))
                     {
-                        if (mbytes)
+                        if(mbytes)
                             return (long)(d.AvailableFreeSpace / 1024f / 1000f);
                         else
                             return d.AvailableFreeSpace;
@@ -506,7 +506,7 @@ namespace Cupscale
         {
             int requiredDiskSpaceMb = 0;
 
-            if (IsPathDirectory(path))
+            if(IsPathDirectory(path))
                 requiredDiskSpaceMb = (GetDirSize(new DirectoryInfo(path)) / 1024f / 1000f).RoundToInt();
             else
                 requiredDiskSpaceMb = (new FileInfo(path).Length / 1024f / 1000f).RoundToInt();
@@ -519,7 +519,7 @@ namespace Cupscale
             int requiredDiskSpaceMb = mBytes;
             long availDiskSpaceMb = GetDiskSpace(drivePath);
             Logger.Log($"Disk space check for {drivePath} with multiplier {multiplier} - {requiredDiskSpaceMb} MB needed, {availDiskSpaceMb} MB available");
-            if (availDiskSpaceMb > requiredDiskSpaceMb)
+            if(availDiskSpaceMb > requiredDiskSpaceMb)
                 return true;
             return false;
         }
@@ -558,7 +558,7 @@ namespace Cupscale
                 string ext = Path.GetExtension(path);
                 string movePath = Path.Combine(dir, newName);
 
-                if (!alsoRenameExtension)
+                if(!alsoRenameExtension)
                     movePath += ext;
 
                 File.Move(path, movePath);
@@ -578,7 +578,7 @@ namespace Cupscale
         {
             string[] exts = new string[] { "mp4", "mkv", "mov", "webm", "avi", "m4v", "gif", "bik" };
 
-            if (exts.Contains(Path.GetExtension(path).Replace(".", "").ToLower()))
+            if(exts.Contains(Path.GetExtension(path).Replace(".", "").ToLower()))
                 return true;
 
             return false;
@@ -586,7 +586,7 @@ namespace Cupscale
 
         public static bool CreateFileIfNotExists(string path)
         {
-            if (File.Exists(path))
+            if(File.Exists(path))
                 return false;
 
             try

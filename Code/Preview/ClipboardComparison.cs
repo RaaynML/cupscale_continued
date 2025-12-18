@@ -29,7 +29,7 @@ namespace Cupscale
 
             try
             {
-                if (fullImage)
+                if(fullImage)
                 {
                     // this code is not used atm and probably does not work!!
                     originalPreview = new Bitmap(ImgUtils.GetImage(Path.Combine(IO.Paths.previewOutPath, "preview-input-scaled.png")));
@@ -82,7 +82,7 @@ namespace Cupscale
                 string barString = "[CS] " + Path.GetFileName(Program.lastImgPath) + " - " + modelName;
 
                 int cf = 0, lf = 0;
-                while (s.Width >= 2 * newWidth)
+                while(s.Width >= 2 * newWidth)
                 {
                     fontSize--;
                     font = new Font(FontFamily.GenericSansSerif, graphics.DpiY * fontSize / 72, FontStyle.Regular);
@@ -102,7 +102,7 @@ namespace Cupscale
             }
             try
             {
-                if (saveToFile)
+                if(saveToFile)
                     await SaveComparisonToFile(outputImage);
                 else
                     Clipboard.SetDataObject(outputImage);
@@ -119,14 +119,14 @@ namespace Cupscale
 
             try
             {
-                if (fullImage)
+                if(fullImage)
                 {
                     originalPreview = new Bitmap(ImgUtils.GetImage(Path.Combine(IO.Paths.previewOutPath, "preview-input-scaled.png")));
                     resultPreview = new Bitmap(ImgUtils.GetImage(Path.Combine(IO.Paths.previewOutPath, "preview-merged.png")));
                 }
                 else
                 {
-                    if (Config.GetInt("comparisonUseScaling") == 1)
+                    if(Config.GetInt("comparisonUseScaling") == 1)
                         originalPreview = (Bitmap)ImgUtils.GetImage(Path.Combine(IO.Paths.previewPath, "preview.png.png"));
                     resultPreview = (Bitmap)ImgUtils.GetImage(Path.Combine(IO.Paths.previewOutPath, "preview.png.png"));
                 }
@@ -176,7 +176,7 @@ namespace Cupscale
                 string barString = "[CS] " + Path.GetFileName(Program.lastImgPath) + " - " + modelName;
 
                 int cf = 0, lf = 0;
-                while (s.Width >= newWidth)
+                while(s.Width >= newWidth)
                 {
                     fontSize--;
                     font = new Font(FontFamily.GenericSansSerif, graphics.DpiY * fontSize / 72, FontStyle.Regular);
@@ -202,7 +202,7 @@ namespace Cupscale
             }
             try
             {
-                if (saveToFile)
+                if(saveToFile)
                     await SaveComparisonToFile(outputImage);
                 else
                     Clipboard.SetDataObject(outputImage);
@@ -235,7 +235,7 @@ namespace Cupscale
         {
             double L1 = 0.2126 * background.R / 255 + 0.7152 * background.G / 255 + 0.0722 * background.B / 255;
             double L2 = 0.2126 * text.R / 255 + 0.7152 * text.G / 255 + 0.0722 * text.B / 255;
-            if (L1 > L2)
+            if(L1 > L2)
                 return (L1 + 0.05) / (L2 + 0.05);
             else
                 return (L2 + 0.05) / (L1 + 0.05);
@@ -246,7 +246,7 @@ namespace Cupscale
         {
 
             string ext = "gif";
-            if (h264) ext = "mp4";
+            if(h264) ext = "mp4";
 
             DialogForm dialogForm = new DialogForm("Creating comparison " + ext.ToUpper() + "...");
 
@@ -260,7 +260,7 @@ namespace Cupscale
             Image image1 = originalPreview;
             Image image2 = resultPreview;
 
-            if (Config.GetInt("comparisonUseScaling") == 1)
+            if(Config.GetInt("comparisonUseScaling") == 1)
                 image1 = (Bitmap)ImgUtils.GetImage(Path.Combine(IO.Paths.previewPath, "preview.png.png"));
 
             float scale = (float)image2.Width / (float)image1.Width;
@@ -268,11 +268,11 @@ namespace Cupscale
 
             string outpath = Path.Combine(tempPath, "comparison." + ext);
 
-            if (image2.Width <= 2048 && image2.Height <= 2048)
+            if(image2.Width <= 2048 && image2.Height <= 2048)
             {
                 image1.Scale(scale, InterpolationMode.NearestNeighbor).Save(Path.Combine(framesPath, "0.png"));
                 image2.Save(Path.Combine(framesPath, "1.png"));
-                if (h264)
+                if(h264)
                 {
                     await FFmpegCommands.FramesToOneFpsMp4(framesPath, false, 14, 9, "", false);
                     File.Move(Path.Combine(tempPath, "frames." + ext), outpath);
@@ -282,7 +282,7 @@ namespace Cupscale
                     await FFmpeg.RunGifski(" -r 1 -W 2048 -q -o " + outpath.Wrap() + " \"" + framesPath + "/\"*.\"png\"");
                 }
 
-                if (save)
+                if(save)
                 {
                     string comparisonSavePath = Path.ChangeExtension(Program.lastImgPath, null) + "-comparison." + ext;
                     File.Copy(outpath, comparisonSavePath, true);
@@ -314,7 +314,7 @@ namespace Cupscale
 
             try
             {
-                if (saveToFile)
+                if(saveToFile)
                     await SaveComparisonToFile(outputImage);
                 else
                     Clipboard.SetDataObject(outputImage);
@@ -325,12 +325,12 @@ namespace Cupscale
             }
         }
 
-        static ImageProcessing.Format GetSaveFormat ()
+        static ImageProcessing.Format GetSaveFormat()
         {
             ImageProcessing.Format saveFormat = ImageProcessing.Format.PngFast;
             if(Config.GetInt("previewFormat") == 1)
                 saveFormat = ImageProcessing.Format.Jpeg;
-            if (Config.GetInt("previewFormat") == 2)
+            if(Config.GetInt("previewFormat") == 2)
                 saveFormat = ImageProcessing.Format.Weppy;
             return saveFormat;
         }

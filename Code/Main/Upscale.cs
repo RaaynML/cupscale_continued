@@ -35,18 +35,18 @@ namespace Cupscale.Main
 
             try
             {
-                if (currentAi == Imps.esrganPytorch)
+                if(currentAi == Imps.esrganPytorch)
                     await EsrganPytorch.Run(inpath, outpath, mdl, cacheSplitDepth, alpha, showTileProgress);
 
-                if (currentAi == Imps.esrganNcnn)
+                if(currentAi == Imps.esrganNcnn)
                     await EsrganNcnn.Run(inpath, outpath, mdl);
 
-                if (currentAi == Imps.realEsrganNcnn)
+                if(currentAi == Imps.realEsrganNcnn)
                     await RealEsrganNcnn.Run(inpath, outpath, mdl);
 
-                if (Program.canceled) return;
+                if(Program.canceled) return;
 
-                if (mode == PreviewUi.PreviewMode.Cutout)
+                if(mode == PreviewUi.PreviewMode.Cutout)
                 {
                     await PreviewUi.ScalePreviewOutput();
                     Program.mainForm.SetProgress(100f, "Merging into preview...");
@@ -55,7 +55,7 @@ namespace Cupscale.Main
                     Program.mainForm.SetHasPreview(true);
                 }
 
-                if (mode == PreviewUi.PreviewMode.FullImage)
+                if(mode == PreviewUi.PreviewMode.FullImage)
                 {
                     await PreviewUi.ScalePreviewOutput();
                     Program.mainForm.SetProgress(100f, "Merging into preview...");
@@ -76,10 +76,10 @@ namespace Cupscale.Main
             {
                 Program.mainForm.SetProgress(0f, "Cancelled.");
 
-                if (Program.canceled)
+                if(Program.canceled)
                     return;
 
-                if (e.Message.Contains("No such file"))
+                if(e.Message.Contains("No such file"))
                     Program.ShowMessage("An error occured during upscaling.\nThe upscale process seems to have exited before completion!", "Error");
                 else
                     Program.ShowMessage("An error occured during upscaling.", "Error");
@@ -94,7 +94,7 @@ namespace Cupscale.Main
             Program.lastOutputDir = path;
             Program.mainForm.AfterFirstUpscale();
 
-            if (overwriteMode == Overwrite.Yes)
+            if(overwriteMode == Overwrite.Yes)
             {
                 Logger.Log("Overwrite mode - removing suffix from filenames");
                 IoUtils.ReplaceInFilenamesDir(Paths.imgOutPath, "-" + GetLastModelName(), "");
@@ -133,30 +133,30 @@ namespace Cupscale.Main
         {
             ModelData mdl = new ModelData();
 
-            if (PreviewUi.currentMode == PreviewUi.MdlMode.Single)
+            if(PreviewUi.currentMode == PreviewUi.MdlMode.Single)
             {
                 string mdl1 = Program.currentModel1;
-                if (string.IsNullOrWhiteSpace(mdl1)) return mdl;
+                if(string.IsNullOrWhiteSpace(mdl1)) return mdl;
                 mdl = new ModelData(mdl1, null, ModelData.ModelMode.Single);
             }
 
-            if (PreviewUi.currentMode == PreviewUi.MdlMode.Interp)
+            if(PreviewUi.currentMode == PreviewUi.MdlMode.Interp)
             {
                 string mdl1 = Program.currentModel1;
                 string mdl2 = Program.currentModel2;
-                if (string.IsNullOrWhiteSpace(mdl1) || string.IsNullOrWhiteSpace(mdl2)) return mdl;
+                if(string.IsNullOrWhiteSpace(mdl1) || string.IsNullOrWhiteSpace(mdl2)) return mdl;
                 mdl = new ModelData(mdl1, mdl2, ModelData.ModelMode.Interp, PreviewUi.interpValue);
             }
 
-            if (PreviewUi.currentMode == PreviewUi.MdlMode.Chain)
+            if(PreviewUi.currentMode == PreviewUi.MdlMode.Chain)
             {
                 string mdl1 = Program.currentModel1;
                 string mdl2 = Program.currentModel2;
-                if (string.IsNullOrWhiteSpace(mdl1) || string.IsNullOrWhiteSpace(mdl2)) return mdl;
+                if(string.IsNullOrWhiteSpace(mdl1) || string.IsNullOrWhiteSpace(mdl2)) return mdl;
                 mdl = new ModelData(mdl1, mdl2, ModelData.ModelMode.Chain);
             }
 
-            if (PreviewUi.currentMode == PreviewUi.MdlMode.Advanced)
+            if(PreviewUi.currentMode == PreviewUi.MdlMode.Advanced)
             {
                 mdl = new ModelData(null, null, ModelData.ModelMode.Advanced);
             }
@@ -166,7 +166,7 @@ namespace Cupscale.Main
 
         public static string FilenamePostprocess(string file)
         {
-            if (Program.canceled) return null;
+            if(Program.canceled) return null;
 
             try
             {
