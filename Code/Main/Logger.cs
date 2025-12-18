@@ -30,8 +30,9 @@ namespace Cupscale
 
 		public static void PrintArgs()
 		{
-			foreach (string arg in Environment.GetCommandLineArgs())
+			foreach (string arg in Environment.GetCommandLineArgs()){
 				Log("Arg: " + arg);
+			}
 		}
 
 		public static void Log(string s, bool logToFile = true, bool noLineBreak = false, bool replaceLastLine = false)
@@ -46,27 +47,32 @@ namespace Cupscale
 				sessionLog = sessionLog.Remove(sessionLog.LastIndexOf(Environment.NewLine));
 			}
 
-			if(!noLineBreak)
+			if(!noLineBreak){
 				sessionLog += Environment.NewLine + s;
-			else
+			} else {
 				sessionLog += " " + s;
+			}
 
-			if(logToFile)
+			if(logToFile){
 				LogToFile(s, noLineBreak);
+			}
 		}
 
 		public static void LogToFile(string s, bool noLineBreak)
 		{
-			if(string.IsNullOrWhiteSpace(file))
+			if(string.IsNullOrWhiteSpace(file)){
 				file = Path.Combine(Paths.GetDataPath(), "sessionlog.txt");
+			}
+
 			string time = DT.Now.Month + "-" + DT.Now.Day + "-" + DT.Now.Year + " " + DT.Now.Hour + ":" + DT.Now.Minute + ":" + DT.Now.Second;
 
 			try
 			{
-				if(!noLineBreak)
+				if(!noLineBreak){
 					File.AppendAllText(file, Environment.NewLine + time + ": " + s);
-				else
+				} else {
 					File.AppendAllText(file, " " + s);
+				}
 			}
 			catch
 			{

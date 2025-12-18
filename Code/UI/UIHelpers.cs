@@ -39,8 +39,9 @@ namespace Cupscale
 		{
 			box.Items.Clear();
 
-			foreach (string item in Enum.GetNames(type))
+			foreach (string item in Enum.GetNames(type)){
 				box.Items.Add(item.TitleCase());
+			}
 
 			InitCombox(box, defaultIndex);
 		}
@@ -49,8 +50,9 @@ namespace Cupscale
 		{
 			box.Items.Clear();
 
-			foreach (string item in list)
+			foreach (string item in list){
 				box.Items.Add(item);
+			}
 
 			InitCombox(box, defaultIndex);
 		}

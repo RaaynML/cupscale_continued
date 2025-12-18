@@ -17,8 +17,10 @@ namespace Cupscale.ImageUtils
         public static async Task PngToDds (string inputFile, string outputPath)
         {
 			string dxtString = Config.Get("dxtMode").ToLower().Replace("argb", "rgb");
-			if(dxtString.Contains(" "))
+			if(dxtString.Contains(" ")){
 				dxtString = dxtString.Split(' ')[0];
+			}
+
 			await Run(inputFile, outputPath, dxtString, Config.GetBool("alpha"), Config.GetBool("ddsEnableMips"));
 
 		}
@@ -36,15 +38,19 @@ namespace Cupscale.ImageUtils
             }
 
 			string alphaStr = "";
-			if(alpha)
+			if(alpha){
 				alphaStr = "-alpha";
+			}
 
 			string mipStr = "-nomips";
-			if(enableMips)
+			if(enableMips){
 				mipStr = "";
+			}
 
 			string opt = "/C";
-			if(stayOpen) opt = "/K";
+			if(stayOpen){
+				opt = "/K";
+			}
 
 			string args = $"{opt} cd /D {Paths.binPath.Wrap()} & ";
 			args += $"nvcompress.exe -{dxtMode} {alphaStr} {mipStr} {inpath.Wrap()} {outpath.Wrap()}";
@@ -69,22 +75,26 @@ namespace Cupscale.ImageUtils
 				nvCompress.BeginErrorReadLine();
 			}
 
-			while(!nvCompress.HasExited)
+			while(!nvCompress.HasExited){
 				await Task.Delay(50);
+			}
 
-			if(inpath.ToLower() != outpath.ToLower())
+			if(inpath.ToLower() != outpath.ToLower()){
 				File.Delete(inpath);
+			}
 		}
 
 		private static void OutputHandler(object sendingProcess, DataReceivedEventArgs output)
 		{
-			if(output == null || output.Data == null)
+			if(output == null || output.Data == null){
 				return;
+			}
 
 			string data = output.Data;
 
-			if(data.Length >= 4)
+			if(data.Length >= 4){
 				Logger.Log("[NvCompress] " + data.Replace("\n", " ").Replace("\r", " "));
+			}
 		}
 	}
 }

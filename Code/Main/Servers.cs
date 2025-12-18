@@ -57,9 +57,10 @@ namespace Cupscale.Main
             {
                 for (int i = 0; i < comboBox.Items.Count; i++)
                 {
-                    if(comboBox.Items[i].ToString() == closestServer.name)
-                        comboBox.SelectedIndex = i;
-                }
+                    if(comboBox.Items[i].ToString() == closestServer.name){
+						comboBox.SelectedIndex = i;
+					}
+				}
             }
         }
     }

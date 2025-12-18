@@ -54,54 +54,60 @@ namespace Cupscale.Forms
         {
             using (var modelForm = new ModelSelectForm(entry1Model1, 0))
             {
-                if(modelForm.ShowDialog() == DialogResult.OK)
-                    e1m1 = modelForm.selectedModel;
-            }
+                if(modelForm.ShowDialog() == DialogResult.OK){
+					e1m1 = modelForm.selectedModel;
+				}
+			}
         }
 
         private void entry1Model2_Click(object sender, EventArgs e)
         {
             using (var modelForm = new ModelSelectForm(entry1Model2, 0))
             {
-                if(modelForm.ShowDialog() == DialogResult.OK)
-                    e1m2 = modelForm.selectedModel;
-            }
+                if(modelForm.ShowDialog() == DialogResult.OK){
+					e1m2 = modelForm.selectedModel;
+				}
+			}
         }
 
         private void entry2Model1_Click(object sender, EventArgs e)
         {
             using (var modelForm = new ModelSelectForm(entry2Model1, 0))
             {
-                if(modelForm.ShowDialog() == DialogResult.OK)
-                    e2m1 = modelForm.selectedModel;
-            }
+                if(modelForm.ShowDialog() == DialogResult.OK){
+					e2m1 = modelForm.selectedModel;
+				}
+			}
         }
 
         private void entry2Model2_Click(object sender, EventArgs e)
         {
             using (var modelForm = new ModelSelectForm(entry2Model2, 0))
             {
-                if(modelForm.ShowDialog() == DialogResult.OK)
-                    e2m2 = modelForm.selectedModel;
-            }
+                if(modelForm.ShowDialog() == DialogResult.OK){
+					e2m2 = modelForm.selectedModel;
+				}
+			}
         }
 
         private void entry3Model1_Click(object sender, EventArgs e)
         {
             using (var modelForm = new ModelSelectForm(entry3Model1, 0))
             {
-                if(modelForm.ShowDialog() == DialogResult.OK)
-                    e3m1 = modelForm.selectedModel;
-            }
+                if(modelForm.ShowDialog() == DialogResult.OK){
+					e3m1 = modelForm.selectedModel;
+				}
+			}
         }
 
         private void entry3Model2_Click(object sender, EventArgs e)
         {
             using (var modelForm = new ModelSelectForm(entry3Model2, 0))
             {
-                if(modelForm.ShowDialog() == DialogResult.OK)
-                    e3m2 = modelForm.selectedModel;
-            }
+                if(modelForm.ShowDialog() == DialogResult.OK){
+					e3m2 = modelForm.selectedModel;
+				}
+			}
         }
 
         private void cancelBtn_Click(object sender, EventArgs e)
@@ -124,10 +130,11 @@ namespace Cupscale.Forms
 
         private void AdvancedModelForm_Load(object sender, EventArgs e)
         {
-            if(!LoadPreset("lastUsed"))
-                return;
+            if(!LoadPreset("lastUsed")){
+				return;
+			}
 
-            ChangeButtonText(entry1Model1, GetModelName(e1m1));
+			ChangeButtonText(entry1Model1, GetModelName(e1m1));
             entry1Model1Interp.Text = e1m1i.ToString();
             ChangeButtonText(entry1Model2, GetModelName(e1m2));
             entry1Model2Interp.Text = e1m2i.ToString();
@@ -145,10 +152,10 @@ namespace Cupscale.Forms
 
         void ChangeButtonText (Button btn, string newText)
         {
-            if(!string.IsNullOrWhiteSpace(newText))
-                btn.Text = newText;
-
-        }
+            if(!string.IsNullOrWhiteSpace(newText)){
+				btn.Text = newText;
+			}
+		}
 
         string GetModelName (string path)
         {

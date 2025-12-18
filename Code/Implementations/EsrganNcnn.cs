@@ -21,10 +21,11 @@ namespace Cupscale.Implementations
 
         public static async Task Run(string inpath, string outpath, ModelData mdl)
         {
-            if(!CheckIfExeExists(Imps.esrganNcnn, exeName))
-                return;
+            if(!CheckIfExeExists(Imps.esrganNcnn, exeName)){
+				return;
+			}
 
-            string modelPath = mdl.model1Path;
+			string modelPath = mdl.model1Path;
             Program.lastModelName = mdl.model1Name;
 
             bool showWindow = Config.GetInt("cmdDebugMode") > 0;
@@ -60,10 +61,11 @@ namespace Cupscale.Implementations
                 proc.BeginErrorReadLine();
             }
 
-            while(!proc.HasExited)
-                await Task.Delay(50);
+            while(!proc.HasExited){
+				await Task.Delay(50);
+			}
 
-            if(Upscale.currentMode == Upscale.UpscaleMode.Batch)
+			if(Upscale.currentMode == Upscale.UpscaleMode.Batch)
             {
                 await Task.Delay(1000);
                 Program.mainForm.SetProgress(100f, "Post-Processing...");
@@ -73,13 +75,15 @@ namespace Cupscale.Implementations
 
         private static void OutputHandler(string line, bool error)
         {
-            if(string.IsNullOrWhiteSpace(line) || line.Length < 6)
-                return;
+            if(string.IsNullOrWhiteSpace(line) || line.Length < 6){
+				return;
+			}
 
-            Logger.Log("[NCNN] " + line.Replace("\n", " ").Replace("\r", " "));
+			Logger.Log("[NCNN] " + line.Replace("\n", " ").Replace("\r", " "));
 
-            if(error)
-                GeneralOutputHandler.HandleImpErrorMsgs(line, GeneralOutputHandler.ProcessType.Ncnn);
-        }
+            if(error){
+				GeneralOutputHandler.HandleImpErrorMsgs(line, GeneralOutputHandler.ProcessType.Ncnn);
+			}
+		}
     }
 }

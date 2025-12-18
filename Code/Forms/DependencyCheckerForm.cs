@@ -72,8 +72,9 @@ namespace Cupscale.Forms
 				string gpuText = NvApi.GetFirstGpuName().Replace("NVIDIA ", "").Replace("AMD ", "").Replace("GeForce ", "");
 				Logger.Log("[DepCheck] First GPU Name: " + gpuText);
 
-				if(NvApi.gpuList.Count > 1)
+				if(NvApi.gpuList.Count > 1){
 					gpuText = $"{gpuText} + {NvApi.gpuList.Count - 1}";
+				}
 
 				SetGreen(nvGpu, gpuText);
 				nvGpuAvail = true;

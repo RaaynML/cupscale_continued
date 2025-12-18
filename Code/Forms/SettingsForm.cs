@@ -99,8 +99,10 @@ namespace Cupscale.Forms
 					"You enabled the embedded Python runtime but haven't downloaded and installed it.\n" +
 					"You can download it in the Dependency Checker window."
 				);
-				while(DialogQueue.IsOpen(msg)) await Task.Delay(50);
-				
+				while(DialogQueue.IsOpen(msg)){
+					await Task.Delay(50);
+				}
+
 				new DependencyCheckerForm(true).ShowDialog();
 			}
 		}
@@ -177,8 +179,10 @@ namespace Cupscale.Forms
 
 		private void logTbox_VisibleChanged(object sender, EventArgs e)
 		{
-			if(logTbox.Visible)
+			if(logTbox.Visible){
 				logTbox.Text = Logger.GetSessionLog();
+			}
+
 			logTbox.SelectionStart = logTbox.Text.Length;
 			logTbox.ScrollToCaret();
 		}
@@ -186,11 +190,14 @@ namespace Cupscale.Forms
 		private void selectModelsPathBtn_Click(object sender, EventArgs e)
 		{
 			CommonOpenFileDialog folderDialog = new CommonOpenFileDialog();
-			if(Directory.Exists(modelPath.Text.Trim()))
+			if(Directory.Exists(modelPath.Text.Trim())){
 				folderDialog.InitialDirectory = modelPath.Text;
+			}
+
 			folderDialog.IsFolderPicker = true;
-			if(folderDialog.ShowDialog() == CommonFileDialogResult.Ok)
+			if(folderDialog.ShowDialog() == CommonFileDialogResult.Ok){
 				modelPath.Text = folderDialog.FileName;
+			}
 		}
 
 		private void installPyBtn_Click(object sender, EventArgs e)
@@ -221,8 +228,9 @@ namespace Cupscale.Forms
 
 		private void uninstallPyBtn_VisibleChanged(object sender, EventArgs e)
 		{
-			if(uninstallPyBtn.Visible)
+			if(uninstallPyBtn.Visible){
 				uninstallPyBtn.Enabled = File.Exists(EmbeddedPython.GetEmbedPyPath());
+			}
 		}
 	}
 }

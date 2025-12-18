@@ -116,7 +116,10 @@ namespace Cupscale.IO
 			catch (Exception e)
 			{
 				MsgBox msg = Logger.ErrorMessage("Web Installer failed to run!\n", e);
-				while(DialogQueue.IsOpen(msg)) await Task.Delay(50);
+				while(DialogQueue.IsOpen(msg)){
+					await Task.Delay(50);
+				}
+
 				Environment.Exit(1);
 				return;
 			}
@@ -142,13 +145,16 @@ namespace Cupscale.IO
 
 			if(Path.GetExtension(filename).ToLower() == ".7z")		// Only run extractor if it's a 7z archive
 			{
-				if(currentDlDialog != null)
+				if(currentDlDialog != null){
 					currentDlDialog.ChangeText($"Installing {filename}...");
+				}
+
 				await UnSevenzip(Path.Combine(Paths.GetDataPath(), filename));
 			}
 
-			if(currentDlDialog != null)
+			if(currentDlDialog != null){
 				currentDlDialog.Close();
+			}
 
 			currentDlDialog = null;
 		}
@@ -192,14 +198,17 @@ namespace Cupscale.IO
 
 		public static void Uninstall (bool full)
 		{
-			if(!Directory.Exists(Paths.GetDataPath()))
+			if(!Directory.Exists(Paths.GetDataPath())){
 				return;
+			}
+
 			try
 			{
-				if(full)
+				if(full){
 					Directory.Delete(Paths.GetDataPath(), true);
-				else
+				} else {
 					Directory.Delete(path, true);
+				}
 			}
 			catch (Exception e)
 			{

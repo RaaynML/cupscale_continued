@@ -47,8 +47,9 @@ namespace Cupscale.OS
                     DialogForm dialog = new DialogForm("Converting ESRGAN model to NCNN format...");
                     await RunConverter(modelPath);
 
-                    if(lastNcnnOutput.Contains("Error:"))
-                        throw new Exception(lastNcnnOutput.SplitIntoLines().Where(x => x.Contains("Error:")).First());
+                    if(lastNcnnOutput.Contains("Error:")){
+						throw new Exception(lastNcnnOutput.SplitIntoLines().Where(x => x.Contains("Error:")).First());
+					}
 
 					string moveFrom = Path.Combine(ConverterDir, Path.ChangeExtension(modelName, null));
                     Logger.Log("Moving " + moveFrom + " to " + outPath);
@@ -72,8 +73,9 @@ namespace Cupscale.OS
 
 		static void ApplyFilenamePattern(string path, string pattern)
         {
-			foreach (FileInfo file in IoUtils.GetFileInfosSorted(path).Where(f => f.Extension == ".bin" || f.Extension == ".param"))
+			foreach (FileInfo file in IoUtils.GetFileInfosSorted(path).Where(f => f.Extension == ".bin" || f.Extension == ".param")){
 				IoUtils.RenameFile(file.FullName, pattern.Replace("*", $"{file.Name.GetInt()}"));
+			}
 		}
 
 		static async Task RunConverter(string modelPath)
@@ -85,7 +87,9 @@ namespace Cupscale.OS
 			modelPath = modelPath.Wrap();
 
 			string opt = "/C";
-			if(stayOpen) opt = "/K";
+			if(stayOpen){
+				opt = "/K";
+			}
 
 			string args = $"{opt} cd /D {ConverterDir.Wrap()} & pth2ncnn.exe {modelPath}";
 
@@ -108,14 +112,16 @@ namespace Cupscale.OS
 				converterProc.BeginErrorReadLine();
 			}
 
-			while(!converterProc.HasExited)
+			while(!converterProc.HasExited){
 				await Task.Delay(100);
+			}
 		}
 
 		private static void OutputHandler(object sendingProcess, DataReceivedEventArgs output)
 		{
-			if(output == null || output.Data == null)
+			if(output == null || output.Data == null){
 				return;
+			}
 
 			string data = output.Data;
 			Logger.Log("[NcnnUtils] Model Converter Output: " + data);
@@ -126,18 +132,21 @@ namespace Cupscale.OS
         {
             try
             {
-				if(!IoUtils.IsPathDirectory(path))
+				if(!IoUtils.IsPathDirectory(path)){
 					return false;
+				}
 
 				DirectoryInfo dir = new DirectoryInfo(path);
 				bool suffixValid = dir.Name.EndsWith(".ncnn");
 				bool filesValid = dir.GetFiles("*.bin").Length == 1 && dir.GetFiles("*.param").Length == 1;
 
-				if(noMoreThanTwoFiles && dir.GetFiles("*").Length > 2)
+				if(noMoreThanTwoFiles && dir.GetFiles("*").Length > 2){
 					filesValid = false;
+				}
 
-				if(requireSuffix && !suffixValid)
+				if(requireSuffix && !suffixValid){
 					return false;
+				}
 
 				return filesValid;
 			}

@@ -116,8 +116,11 @@ namespace Cupscale.Main
                 py.WaitForExit();
                 string output = py.StandardOutput.ReadToEnd();
                 string err = py.StandardError.ReadToEnd();
-                if(!string.IsNullOrWhiteSpace(err)) output += "\n" + err;
-                Logger.Log("[DepCheck] Pytorch Check Output: " + output.Trim());
+                if(!string.IsNullOrWhiteSpace(err)){
+					output += "\n" + err;
+				}
+
+				Logger.Log("[DepCheck] Pytorch Check Output: " + output.Trim());
                 return output;
             } catch {
                 return "";

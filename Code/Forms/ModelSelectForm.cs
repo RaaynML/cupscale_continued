@@ -51,30 +51,35 @@ namespace Cupscale.Forms
 			DirectoryInfo modelsDir = new DirectoryInfo(modelDir);
 			BuildTree(modelsDir, modelTree.Nodes);
 
-			if(Config.GetBool("modelSelectAutoExpand"))
+			if(Config.GetBool("modelSelectAutoExpand")){
 				modelTree.ExpandAll();
-			else
+			} else {
 				modelTree.Nodes[0].Expand();
+			}
 		}
 
 		private async void SelectLastUsed()
 		{
-			if(!Directory.Exists(Config.Get("modelPath")))
+			if(!Directory.Exists(Config.Get("modelPath"))){
 				return;
+			}
 
-			while(modelTree.Nodes.Count < 1)
+			while(modelTree.Nodes.Count < 1){
 				await Task.Delay(100);
+			}
 
-			if(string.IsNullOrWhiteSpace(Program.currentModel1))
+			if(string.IsNullOrWhiteSpace(Program.currentModel1)){
 				modelTree.SelectedNode = modelTree.Nodes[0];
-			else
+			} else {
 				CheckNodesRecursive(modelTree.Nodes[0]);
+			}
 		}
 
 		private void CheckNodesRecursive(TreeNode parentNode)
 		{
-			if(modelBtn != null && parentNode.Text.Trim() == modelBtn.Text.Trim())
+			if(modelBtn != null && parentNode.Text.Trim() == modelBtn.Text.Trim()){
 				modelTree.SelectedNode = parentNode;
+			}
 
 			foreach (TreeNode subNode in parentNode.Nodes)
 			{
@@ -86,8 +91,9 @@ namespace Cupscale.Forms
 		{
 			foreach (FileInfo file in IoUtils.GetFileInfosSorted(path, true, "*.*"))
 			{
-				if(file.Extension == ".PTH")
+				if(file.Extension == ".PTH"){
 					file.MoveTo(Path.ChangeExtension(file.FullName, "pth"));
+				}
 			}
 		}
 
@@ -98,25 +104,31 @@ namespace Cupscale.Forms
 			foreach (FileInfo file in directoryInfo.GetFiles())
 			{
 				if(file.Extension == ".pth")    // Hide any other file extension
+{
 					currNode.Nodes.Add(file.FullName, Path.ChangeExtension(file.Name, null));
+				}
 			}
 
 			foreach (DirectoryInfo subDir in directoryInfo.GetDirectories())
 			{
 				bool isNcnnModel = NcnnUtils.IsDirNcnnModel(subDir.FullName);
 
-				if(isNcnnModel)
+				if(isNcnnModel){
 					currNode.Nodes.Add(subDir.FullName, subDir.Name.Substring(0, subDir.Name.Length - 5));
+				}
 
 				bool hasAnyPthFiles = subDir.GetFiles("*.pth", SearchOption.AllDirectories).Length > 0;
 				bool hasAnyBinFiles = subDir.GetFiles("*.bin", SearchOption.AllDirectories).Length > 0;
 				bool hasAnyParamFiles = subDir.GetFiles("*.param", SearchOption.AllDirectories).Length > 0;
 
-				if(isNcnnModel || subDir.Name.StartsWith("."))
+				if(isNcnnModel || subDir.Name.StartsWith(".")){
 					continue;   // Don't add this folder to the tree if it's a model, not a dir with more models
+				}
 
 				if(hasAnyPthFiles || hasAnyBinFiles || hasAnyParamFiles)     // Don't list folders that have no model files
+{
 					BuildTree(subDir, currNode.Nodes);
+				}
 			}
 		}
 
@@ -125,11 +137,17 @@ namespace Cupscale.Forms
 			selectedModel = modelTree.SelectedNode.Name;
 			string modelName = Path.GetFileNameWithoutExtension(selectedModel);
 
-			if(modelBtn != null)
+			if(modelBtn != null){
 				modelBtn.Text = modelName;
+			}
 
-			if(modelNo == 1) Program.currentModel1 = selectedModel;
-			if(modelNo == 2) Program.currentModel2 = selectedModel;
+			if(modelNo == 1){
+				Program.currentModel1 = selectedModel;
+			}
+
+			if(modelNo == 2){
+				Program.currentModel2 = selectedModel;
+			}
 
 			Config.Set("lastMdl1", Program.currentModel1);
 			Config.Set("lastMdl2", Program.currentModel2);
@@ -153,8 +171,9 @@ namespace Cupscale.Forms
 			if(e.KeyChar == (char)Keys.Enter)
 			{
 				e.Handled = true;
-				if(confirmBtn.Enabled)
+				if(confirmBtn.Enabled){
 					confirmBtn_Click(null, null);
+				}
 			}
 
 			if(e.KeyChar == (char)Keys.Escape)
@@ -168,8 +187,14 @@ namespace Cupscale.Forms
 		{
 			selectedModel = "";
 			modelBtn.Text = "None";
-			if(modelNo == 1) Program.currentModel1 = null;
-			if(modelNo == 2) Program.currentModel2 = null;
+			if(modelNo == 1){
+				Program.currentModel1 = null;
+			}
+
+			if(modelNo == 2){
+				Program.currentModel2 = null;
+			}
+
 			DialogResult = DialogResult.OK;
 			Close();
 		}

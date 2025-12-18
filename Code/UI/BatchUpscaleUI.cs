@@ -49,8 +49,11 @@ namespace Cupscale.UI
             currentParentDir = path.Trim();
             currentInFiles = null;
             Program.lastDirPath = currentInDir;
-            if(noGui) return;
-            outDir.Text = path;
+            if(noGui){
+				return;
+			}
+
+			outDir.Text = path;
             string[] files = Directory.GetFiles(currentInDir, "*", SearchOption.AllDirectories).Where(file => IoUtils.compatibleExtensions.Any(x => file.EndsWith(x, StringComparison.OrdinalIgnoreCase))).ToArray();
             FillFileList(files, true);
             TabSelected();
@@ -80,9 +83,11 @@ namespace Cupscale.UI
 
         public static void TabSelected()
         {
-            if(!outDir.Visible)
-                return;
-            if(string.IsNullOrWhiteSpace(currentInDir))
+            if(!outDir.Visible){
+				return;
+			}
+
+			if(string.IsNullOrWhiteSpace(currentInDir))
             {
                 Program.mainForm.SetButtonText("Upscale Images");
                 return;
@@ -113,10 +118,14 @@ namespace Cupscale.UI
                     File.Copy(img, Path.Combine(Paths.imgInPath, Path.GetFileName(img)));
                     i++;
                     float prog = -1f;
-                    if(targetAmount > 0)
-                        prog = ((float)i / targetAmount) * 100f;
-                    if(i % 20 == 0) Program.mainForm.SetProgress(prog, $"Copied {i} images...");
-                }
+                    if(targetAmount > 0){
+						prog = ((float)i / targetAmount) * 100f;
+					}
+
+					if(i % 20 == 0){
+						Program.mainForm.SetProgress(prog, $"Copied {i} images...");
+					}
+				}
                 await Task.Delay(1);
             }
         }
@@ -149,12 +158,15 @@ namespace Cupscale.UI
             bool useCpu = (cudaFallback == 1);
 
             string imgOutDir = outDir.Text.Trim();
-            if(!string.IsNullOrWhiteSpace(overrideOutDir)) imgOutDir = overrideOutDir;
+            if(!string.IsNullOrWhiteSpace(overrideOutDir)){
+				imgOutDir = overrideOutDir;
+			}
 
-            if(!PreviewUi.HasValidModelSelection())
-                return;
+			if(!PreviewUi.HasValidModelSelection()){
+				return;
+			}
 
-            if(string.IsNullOrWhiteSpace(currentInDir) && (currentInFiles == null || currentInFiles.Length < 1))
+			if(string.IsNullOrWhiteSpace(currentInDir) && (currentInFiles == null || currentInFiles.Length < 1))
             {
                 Program.ShowMessage("No directory or files loaded.", "Error");
                 return;
@@ -174,18 +186,20 @@ namespace Cupscale.UI
             await CopyCompatibleImagesToTemp();
             Program.mainForm.SetProgress(3f, "Pre-Processing...");
 
-            if(preprocess)
-                await ImageProcessing.PreProcessImages(Paths.imgInPath, !bool.Parse(Config.Get("alpha")));
-            else
-                IoUtils.AppendToFilenames(Paths.imgInPath, ".png");
+            if(preprocess){
+				await ImageProcessing.PreProcessImages(Paths.imgInPath, !bool.Parse(Config.Get("alpha")));
+			} else {
+				IoUtils.AppendToFilenames(Paths.imgInPath, ".png");
+			}
 
-            ModelData mdl = Upscale.GetModelData();
+			ModelData mdl = Upscale.GetModelData();
             GetProgress(Paths.imgOutPath, IoUtils.GetAmountOfFiles(Paths.imgInPath, true));
 
-            if(postProcess)
-                PostProcessingQueue.Start(imgOutDir);
+            if(postProcess){
+				PostProcessingQueue.Start(imgOutDir);
+			}
 
-            List<Task> tasks = new List<Task>();
+			List<Task> tasks = new List<Task>();
             tasks.Add(Upscale.Run(Paths.imgInPath, Paths.imgOutPath, mdl, cacheSplitDepth, bool.Parse(Config.Get("alpha")), PreviewUi.PreviewMode.None, false));
             
             if(postProcess)
@@ -197,10 +211,11 @@ namespace Cupscale.UI
             sw.Restart();
             await Task.WhenAll(tasks);
 
-            if(!Program.canceled)
-                Program.mainForm.SetProgress(0, $"Done - Upscaling took {(sw.ElapsedMilliseconds / 1000f).ToString("0")}s");
+            if(!Program.canceled){
+				Program.mainForm.SetProgress(0, $"Done - Upscaling took {(sw.ElapsedMilliseconds / 1000f).ToString("0")}s");
+			}
 
-            Program.mainForm.SetBusy(false);
+			Program.mainForm.SetBusy(false);
         }
 
         public static int upscaledImages = 0;
@@ -214,11 +229,14 @@ namespace Cupscale.UI
                 {
                     float percentage = (float)upscaledImages / target;
                     percentage = percentage * 100f;
-                    if(percentage >= 100f)
-                        break;
-                    if(upscaledImages > 0)
-                        Program.mainForm.SetProgress((int)Math.Round(percentage), "Upscaled " + upscaledImages + "/" + target + " images");
-                }
+                    if(percentage >= 100f){
+						break;
+					}
+
+					if(upscaledImages > 0){
+						Program.mainForm.SetProgress((int)Math.Round(percentage), "Upscaled " + upscaledImages + "/" + target + " images");
+					}
+				}
                 await Task.Delay(500);
             }
             Program.mainForm.SetProgress(0);
@@ -230,15 +248,18 @@ namespace Cupscale.UI
             Logger.Log("currentInDir: " + currentInDir + ", imgInPath: " + Paths.imgInPath);
 
             if(currentInDir == Paths.imgInPath)    // Skip if we are directly upscaling the img-in folder
-                return;
+{
+				return;
+			}
 
-            Logger.Log($"Clearing '{Paths.imgInPath}'");
+			Logger.Log($"Clearing '{Paths.imgInPath}'");
             IoUtils.ClearDir(Paths.imgInPath);
 
-            if(multiImgMode)
-                await CopyImages(currentInFiles);
-            else
-                await IoUtils.CopyDir(currentInDir, Paths.imgInPath, "*", false, true);
-        }
+            if(multiImgMode){
+				await CopyImages(currentInFiles);
+			} else {
+				await IoUtils.CopyDir(currentInDir, Paths.imgInPath, "*", false, true);
+			}
+		}
     }
 }

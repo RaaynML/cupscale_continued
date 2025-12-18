@@ -82,8 +82,9 @@ namespace Cupscale
 			mainForm.SetProgress(0, "Canceled.");
 			mainForm.SetBusy(false);
 
-			if(reason.Trim().Length > 0)
+			if(reason.Trim().Length > 0){
 				ShowMessage(reason);
+			}
 
 			if(cleanup){
 				IoUtils.ClearDir(Paths.imgInPath);
@@ -120,8 +121,7 @@ namespace Cupscale
 
 		public static void CloseTempForms()
 		{
-			foreach(Form form in currentTemporaryForms.ToList())
-				form.Close();
+			foreach(Form form in currentTemporaryForms.ToList()){ form.Close(); }
 		}
 
 		public static async Task PutTaskDelay()

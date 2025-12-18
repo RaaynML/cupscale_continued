@@ -35,18 +35,23 @@ namespace Cupscale.Main
 
             try
             {
-                if(currentAi == Imps.esrganPytorch)
-                    await EsrganPytorch.Run(inpath, outpath, mdl, cacheSplitDepth, alpha, showTileProgress);
+                if(currentAi == Imps.esrganPytorch){
+					await EsrganPytorch.Run(inpath, outpath, mdl, cacheSplitDepth, alpha, showTileProgress);
+				}
 
-                if(currentAi == Imps.esrganNcnn)
-                    await EsrganNcnn.Run(inpath, outpath, mdl);
+				if(currentAi == Imps.esrganNcnn){
+					await EsrganNcnn.Run(inpath, outpath, mdl);
+				}
 
-                if(currentAi == Imps.realEsrganNcnn)
-                    await RealEsrganNcnn.Run(inpath, outpath, mdl);
+				if(currentAi == Imps.realEsrganNcnn){
+					await RealEsrganNcnn.Run(inpath, outpath, mdl);
+				}
 
-                if(Program.canceled) return;
+				if(Program.canceled){
+					return;
+				}
 
-                if(mode == PreviewUi.PreviewMode.Cutout)
+				if(mode == PreviewUi.PreviewMode.Cutout)
                 {
                     await PreviewUi.ScalePreviewOutput();
                     Program.mainForm.SetProgress(100f, "Merging into preview...");
@@ -76,15 +81,17 @@ namespace Cupscale.Main
             {
                 Program.mainForm.SetProgress(0f, "Cancelled.");
 
-                if(Program.canceled)
-                    return;
+                if(Program.canceled){
+					return;
+				}
 
-                if(e.Message.Contains("No such file"))
-                    Program.ShowMessage("An error occured during upscaling.\nThe upscale process seems to have exited before completion!", "Error");
-                else
-                    Program.ShowMessage("An error occured during upscaling.", "Error");
+				if(e.Message.Contains("No such file")){
+					Program.ShowMessage("An error occured during upscaling.\nThe upscale process seems to have exited before completion!", "Error");
+				} else {
+					Program.ShowMessage("An error occured during upscaling.", "Error");
+				}
 
-                Logger.Log("[ESRGAN] Upscaling Error: " + e.Message + "\n" + e.StackTrace);
+				Logger.Log("[ESRGAN] Upscaling Error: " + e.Message + "\n" + e.StackTrace);
             }
 
         }
@@ -136,24 +143,33 @@ namespace Cupscale.Main
             if(PreviewUi.currentMode == PreviewUi.MdlMode.Single)
             {
                 string mdl1 = Program.currentModel1;
-                if(string.IsNullOrWhiteSpace(mdl1)) return mdl;
-                mdl = new ModelData(mdl1, null, ModelData.ModelMode.Single);
+                if(string.IsNullOrWhiteSpace(mdl1)){
+					return mdl;
+				}
+
+				mdl = new ModelData(mdl1, null, ModelData.ModelMode.Single);
             }
 
             if(PreviewUi.currentMode == PreviewUi.MdlMode.Interp)
             {
                 string mdl1 = Program.currentModel1;
                 string mdl2 = Program.currentModel2;
-                if(string.IsNullOrWhiteSpace(mdl1) || string.IsNullOrWhiteSpace(mdl2)) return mdl;
-                mdl = new ModelData(mdl1, mdl2, ModelData.ModelMode.Interp, PreviewUi.interpValue);
+                if(string.IsNullOrWhiteSpace(mdl1) || string.IsNullOrWhiteSpace(mdl2)){
+					return mdl;
+				}
+
+				mdl = new ModelData(mdl1, mdl2, ModelData.ModelMode.Interp, PreviewUi.interpValue);
             }
 
             if(PreviewUi.currentMode == PreviewUi.MdlMode.Chain)
             {
                 string mdl1 = Program.currentModel1;
                 string mdl2 = Program.currentModel2;
-                if(string.IsNullOrWhiteSpace(mdl1) || string.IsNullOrWhiteSpace(mdl2)) return mdl;
-                mdl = new ModelData(mdl1, mdl2, ModelData.ModelMode.Chain);
+                if(string.IsNullOrWhiteSpace(mdl1) || string.IsNullOrWhiteSpace(mdl2)){
+					return mdl;
+				}
+
+				mdl = new ModelData(mdl1, mdl2, ModelData.ModelMode.Chain);
             }
 
             if(PreviewUi.currentMode == PreviewUi.MdlMode.Advanced)
@@ -166,9 +182,11 @@ namespace Cupscale.Main
 
         public static string FilenamePostprocess(string file)
         {
-            if(Program.canceled) return null;
+            if(Program.canceled){
+				return null;
+			}
 
-            try
+			try
             {
                 string newFilename = file;
                 string pathNoExt = Path.ChangeExtension(file, null);

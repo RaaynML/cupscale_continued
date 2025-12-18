@@ -83,8 +83,9 @@ namespace Cupscale.Main
             //    errored = true;
             //}
 
-            if(errored)
-                Program.Cancel();
-        }
+            if(errored){
+				Program.Cancel();
+			}
+		}
     }
 }

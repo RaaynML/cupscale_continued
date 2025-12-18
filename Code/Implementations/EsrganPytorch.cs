@@ -36,10 +36,15 @@ namespace Cupscale.Implementations
             string alphaMode = alpha ? $"--alpha_mode {Config.GetInt("esrganPytorchAlphaMode")}" : "--alpha_mode 0";
 
             string alphaDepth = "";
-            if(Config.GetInt("esrganPytorchAlphaDepth") == 1) alphaDepth = "--binary_alpha";
-            if(Config.GetInt("esrganPytorchAlphaDepth") == 2) alphaDepth = "--ternary_alpha";
+            if(Config.GetInt("esrganPytorchAlphaDepth") == 1){
+				alphaDepth = "--binary_alpha";
+			}
 
-            string cpu = Config.GetBool("esrganPytorchCpu") ? "--cpu" : "";
+			if(Config.GetInt("esrganPytorchAlphaDepth") == 2){
+				alphaDepth = "--ternary_alpha";
+			}
+
+			string cpu = Config.GetBool("esrganPytorchCpu") ? "--cpu" : "";
             string device = $"--device_id {Config.GetInt("esrganPytorchGpuId")}";
             string seam = "";
 
@@ -77,10 +82,11 @@ namespace Cupscale.Implementations
 
             while(!proc.HasExited)
             {
-                if(showTileProgress)
-                    await UpdateProgressFromFile();
+                if(showTileProgress){
+					await UpdateProgressFromFile();
+				}
 
-                await Task.Delay(50);
+				await Task.Delay(50);
             }
 
             if(Upscale.currentMode == Upscale.UpscaleMode.Batch)
@@ -163,30 +169,33 @@ namespace Cupscale.Implementations
                 proc.BeginErrorReadLine();
             }
 
-            while(!proc.HasExited)
-                await Task.Delay(50);
+            while(!proc.HasExited){
+				await Task.Delay(50);
+			}
 
-            //string output = proc.StandardOutput.ReadToEnd();
-            //string err = proc.StandardError.ReadToEnd();
-            //if(!string.IsNullOrWhiteSpace(err)) output += "\n" + err;
-            //Logger.Log("[ESRGAN Interp] Output: " + output);
-            //
-            //if(output.ToLower().Contains("error"))
-            //    throw new Exception("Interpolation Error - Output:\n" + output);
+			//string output = proc.StandardOutput.ReadToEnd();
+			//string err = proc.StandardError.ReadToEnd();
+			//if(!string.IsNullOrWhiteSpace(err)) output += "\n" + err;
+			//Logger.Log("[ESRGAN Interp] Output: " + output);
+			//
+			//if(output.ToLower().Contains("error"))
+			//    throw new Exception("Interpolation Error - Output:\n" + output);
 
-            return outPath;
+			return outPath;
         }
 
         private static void OutputHandler(string line, bool error)
         {
-            if(string.IsNullOrWhiteSpace(line) || line.Length < 3)
-                return;
+            if(string.IsNullOrWhiteSpace(line) || line.Length < 3){
+				return;
+			}
 
-            Logger.Log("[Python] " + line.Replace("\n", " ").Replace("\r", " "));
+			Logger.Log("[Python] " + line.Replace("\n", " ").Replace("\r", " "));
 
-            if(error)
-                GeneralOutputHandler.HandleImpErrorMsgs(line, GeneralOutputHandler.ProcessType.Python);
-        }
+            if(error){
+				GeneralOutputHandler.HandleImpErrorMsgs(line, GeneralOutputHandler.ProcessType.Python);
+			}
+		}
 
         static string lastProgressString = "";
 
@@ -194,20 +203,23 @@ namespace Cupscale.Implementations
         {
             string progressLogFile = ProgressLogFile;
 
-            if(!File.Exists(progressLogFile))
-                return;
+            if(!File.Exists(progressLogFile)){
+				return;
+			}
 
-            string[] lines = IoUtils.ReadLines(progressLogFile);
+			string[] lines = IoUtils.ReadLines(progressLogFile);
 
-            if(lines.Length < 1)
-                return;
+            if(lines.Length < 1){
+				return;
+			}
 
-            string outStr = (lines[lines.Length - 1]);
+			string outStr = (lines[lines.Length - 1]);
 
-            if(outStr == lastProgressString)
-                return;
+            if(outStr == lastProgressString){
+				return;
+			}
 
-            lastProgressString = outStr;
+			lastProgressString = outStr;
 
             if(outStr.Contains("Applying model") || outStr.Contains("Upscaling..."))
             {

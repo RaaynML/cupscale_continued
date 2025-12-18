@@ -15,15 +15,17 @@ namespace Cupscale.Main
     {
         public static async Task PostprocessingSingle(string path, bool dontResize = false, int retryCount = 20, bool trimPngExt = true)
         {
-            if(!IoUtils.IsFileValid(path))
-                return;
+            if(!IoUtils.IsFileValid(path)){
+				return;
+			}
 
-            string newPath = "";
+			string newPath = "";
 
-            if(trimPngExt)
-                newPath = path.Substring(0, path.Length - 4);
+            if(trimPngExt){
+				newPath = path.Substring(0, path.Length - 4);
+			}
 
-            Logger.Log($"PostProc: Trimmed filename from '{Path.GetFileName(path)}' to '{Path.GetFileName(newPath)}'");
+			Logger.Log($"PostProc: Trimmed filename from '{Path.GetFileName(path)}' to '{Path.GetFileName(newPath)}'");
 
             try
             {
@@ -57,27 +59,33 @@ namespace Cupscale.Main
                 return;
             }
 
-            if(format == Upscale.ImgExportMode.SameAsSource.ToStringTitleCase())
-                await ImageProcessing.ConvertImageToOriginalFormat(path, true, false, dontResize);
+            if(format == Upscale.ImgExportMode.SameAsSource.ToStringTitleCase()){
+				await ImageProcessing.ConvertImageToOriginalFormat(path, true, false, dontResize);
+			}
 
-            if(format == Upscale.ImgExportMode.JPEG.ToStringTitleCase())
-                await ImageProcessing.PostProcessImage(path, ImageProcessing.Format.Jpeg, dontResize);
+			if(format == Upscale.ImgExportMode.JPEG.ToStringTitleCase()){
+				await ImageProcessing.PostProcessImage(path, ImageProcessing.Format.Jpeg, dontResize);
+			}
 
-            if(format == Upscale.ImgExportMode.WEBP.ToStringTitleCase())
-                await ImageProcessing.PostProcessImage(path, ImageProcessing.Format.Weppy, dontResize);
+			if(format == Upscale.ImgExportMode.WEBP.ToStringTitleCase()){
+				await ImageProcessing.PostProcessImage(path, ImageProcessing.Format.Weppy, dontResize);
+			}
 
-            if(format == Upscale.ImgExportMode.BMP.ToStringTitleCase())
-                await ImageProcessing.PostProcessImage(path, ImageProcessing.Format.BMP, dontResize);
+			if(format == Upscale.ImgExportMode.BMP.ToStringTitleCase()){
+				await ImageProcessing.PostProcessImage(path, ImageProcessing.Format.BMP, dontResize);
+			}
 
-            if(format == Upscale.ImgExportMode.TGA.ToStringTitleCase())
-                await ImageProcessing.PostProcessImage(path, ImageProcessing.Format.TGA, dontResize);
+			if(format == Upscale.ImgExportMode.TGA.ToStringTitleCase()){
+				await ImageProcessing.PostProcessImage(path, ImageProcessing.Format.TGA, dontResize);
+			}
 
-            if(format == Upscale.ImgExportMode.DDS.ToStringTitleCase())
-                await ImageProcessing.PostProcessDDS(path);
+			if(format == Upscale.ImgExportMode.DDS.ToStringTitleCase()){
+				await ImageProcessing.PostProcessDDS(path);
+			}
 
-            if(format == Upscale.ImgExportMode.GIF.ToStringTitleCase())
-                await ImageProcessing.PostProcessImage(path, ImageProcessing.Format.GIF, dontResize);
-
-        }
+			if(format == Upscale.ImgExportMode.GIF.ToStringTitleCase()){
+				await ImageProcessing.PostProcessImage(path, ImageProcessing.Format.GIF, dontResize);
+			}
+		}
     }
 }

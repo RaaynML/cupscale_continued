@@ -61,8 +61,9 @@ namespace Cupscale.Forms
 		private void addModelBtn_Click(object sender, EventArgs e)
 		{
 			using(var modelForm = new ModelSelectForm(null, 0)){
-				if(modelForm.ShowDialog() == DialogResult.OK)
+				if(modelForm.ShowDialog() == DialogResult.OK){
 					modelPathsBox.AppendText(modelForm.selectedModel + Environment.NewLine);
+				}
 			}
 		}
 
@@ -148,14 +149,20 @@ namespace Cupscale.Forms
 
 			try {
 				string inpath = Paths.previewPath;
-				if(fullImage) inpath = Paths.tempImgPath.GetParentDir();
+				if(fullImage){
+					inpath = Paths.tempImgPath.GetParentDir();
+				}
+
 				await Upscale.Run(inpath, Paths.compositionOut, mdl, false, Config.GetBool("alpha"), PreviewUi.PreviewMode.None);
 				outImg = Directory.GetFiles(Paths.compositionOut, "*.png", SearchOption.AllDirectories)[0];
 				await PostProcessing.PostprocessingSingle(outImg, false, 10, false);
 				await ProcessImage(PreviewUi.lastOutfile, mdl.model1Name);
 				IoUtils.TryCopy(PreviewUi.lastOutfile, Path.Combine(Paths.imgOutPath, $"{index}-{mdl.model1Name}.png"), true);
 			} catch(Exception e){
-				if(Program.canceled) return;
+				if(Program.canceled){
+					return;
+				}
+
 				Program.Cancel($"An error occured: {e.Message}");
 			}
 

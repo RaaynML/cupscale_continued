@@ -29,9 +29,10 @@ namespace Cupscale
 			string[] files = Directory.GetFiles("*.pth", Config.Get("modelPath"), SearchOption.AllDirectories);
 			foreach(string modelFile in files)
             {
-				if(Path.GetFileNameWithoutExtension(modelFile) == modelName)
+				if(Path.GetFileNameWithoutExtension(modelFile) == modelName){
 					return true;
-            }
+				}
+			}
 			return false;
 		}
 

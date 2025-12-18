@@ -37,9 +37,11 @@ namespace Cupscale
                 }
                 else
                 {
-                    if(Config.GetInt("comparisonUseScaling") == 1)
-                        originalPreview = (Bitmap)ImgUtils.GetImage(Directory.GetFiles(IO.Paths.previewPath, "*.png.*", SearchOption.AllDirectories)[0]);
-                    resultPreview = (Bitmap)ImgUtils.GetImage(Directory.GetFiles(IO.Paths.previewOutPath, "*.png.*", SearchOption.AllDirectories)[0]);
+                    if(Config.GetInt("comparisonUseScaling") == 1){
+						originalPreview = (Bitmap)ImgUtils.GetImage(Directory.GetFiles(IO.Paths.previewPath, "*.png.*", SearchOption.AllDirectories)[0]);
+					}
+
+					resultPreview = (Bitmap)ImgUtils.GetImage(Directory.GetFiles(IO.Paths.previewOutPath, "*.png.*", SearchOption.AllDirectories)[0]);
                 }
             }
             catch
@@ -102,11 +104,12 @@ namespace Cupscale
             }
             try
             {
-                if(saveToFile)
-                    await SaveComparisonToFile(outputImage);
-                else
-                    Clipboard.SetDataObject(outputImage);
-            }
+                if(saveToFile){
+					await SaveComparisonToFile(outputImage);
+				} else {
+					Clipboard.SetDataObject(outputImage);
+				}
+			}
             catch
             {
                 Program.ShowMessage("Failed to save comparison.", "Error");
@@ -126,9 +129,11 @@ namespace Cupscale
                 }
                 else
                 {
-                    if(Config.GetInt("comparisonUseScaling") == 1)
-                        originalPreview = (Bitmap)ImgUtils.GetImage(Path.Combine(IO.Paths.previewPath, "preview.png.png"));
-                    resultPreview = (Bitmap)ImgUtils.GetImage(Path.Combine(IO.Paths.previewOutPath, "preview.png.png"));
+                    if(Config.GetInt("comparisonUseScaling") == 1){
+						originalPreview = (Bitmap)ImgUtils.GetImage(Path.Combine(IO.Paths.previewPath, "preview.png.png"));
+					}
+
+					resultPreview = (Bitmap)ImgUtils.GetImage(Path.Combine(IO.Paths.previewOutPath, "preview.png.png"));
                 }
             }
             catch
@@ -202,11 +207,12 @@ namespace Cupscale
             }
             try
             {
-                if(saveToFile)
-                    await SaveComparisonToFile(outputImage);
-                else
-                    Clipboard.SetDataObject(outputImage);
-            }
+                if(saveToFile){
+					await SaveComparisonToFile(outputImage);
+				} else {
+					Clipboard.SetDataObject(outputImage);
+				}
+			}
             catch
             {
                 Program.ShowMessage("Failed to save comparison.", "Error");
@@ -235,20 +241,22 @@ namespace Cupscale
         {
             double L1 = 0.2126 * background.R / 255 + 0.7152 * background.G / 255 + 0.0722 * background.B / 255;
             double L2 = 0.2126 * text.R / 255 + 0.7152 * text.G / 255 + 0.0722 * text.B / 255;
-            if(L1 > L2)
-                return (L1 + 0.05) / (L2 + 0.05);
-            else
-                return (L2 + 0.05) / (L1 + 0.05);
-
-        }
+            if(L1 > L2){
+				return (L1 + 0.05) / (L2 + 0.05);
+			} else {
+				return (L2 + 0.05) / (L1 + 0.05);
+			}
+		}
 
         public static async void BeforeAfterAnim (bool save, bool h264)
         {
 
             string ext = "gif";
-            if(h264) ext = "mp4";
+            if(h264){
+				ext = "mp4";
+			}
 
-            DialogForm dialogForm = new DialogForm("Creating comparison " + ext.ToUpper() + "...");
+			DialogForm dialogForm = new DialogForm("Creating comparison " + ext.ToUpper() + "...");
 
             string tempPath = Path.Combine(Paths.GetDataPath(), "giftemp");
             string framesPath = Path.Combine(tempPath, "frames");
@@ -260,10 +268,11 @@ namespace Cupscale
             Image image1 = originalPreview;
             Image image2 = resultPreview;
 
-            if(Config.GetInt("comparisonUseScaling") == 1)
-                image1 = (Bitmap)ImgUtils.GetImage(Path.Combine(IO.Paths.previewPath, "preview.png.png"));
+            if(Config.GetInt("comparisonUseScaling") == 1){
+				image1 = (Bitmap)ImgUtils.GetImage(Path.Combine(IO.Paths.previewPath, "preview.png.png"));
+			}
 
-            float scale = (float)image2.Width / (float)image1.Width;
+			float scale = (float)image2.Width / (float)image1.Width;
             Logger.Log("Scale for animation: " + scale);
 
             string outpath = Path.Combine(tempPath, "comparison." + ext);
@@ -314,11 +323,12 @@ namespace Cupscale
 
             try
             {
-                if(saveToFile)
-                    await SaveComparisonToFile(outputImage);
-                else
-                    Clipboard.SetDataObject(outputImage);
-            }
+                if(saveToFile){
+					await SaveComparisonToFile(outputImage);
+				} else {
+					Clipboard.SetDataObject(outputImage);
+				}
+			}
             catch
             {
                 Program.ShowMessage("Failed to save comparison.", "Error");
@@ -328,11 +338,15 @@ namespace Cupscale
         static ImageProcessing.Format GetSaveFormat()
         {
             ImageProcessing.Format saveFormat = ImageProcessing.Format.PngFast;
-            if(Config.GetInt("previewFormat") == 1)
-                saveFormat = ImageProcessing.Format.Jpeg;
-            if(Config.GetInt("previewFormat") == 2)
-                saveFormat = ImageProcessing.Format.Weppy;
-            return saveFormat;
+            if(Config.GetInt("previewFormat") == 1){
+				saveFormat = ImageProcessing.Format.Jpeg;
+			}
+
+			if(Config.GetInt("previewFormat") == 2){
+				saveFormat = ImageProcessing.Format.Weppy;
+			}
+
+			return saveFormat;
         }
     }
 }

@@ -15,8 +15,9 @@ namespace Cupscale.UI
 
 		public static void Init()
 		{
-			if(!running)
+			if(!running){
 				_ = ShowQueue();
+			}
 		}
 
 		static async Task ShowQueue()
@@ -39,8 +40,10 @@ namespace Cupscale.UI
 
 		public static void CloseCurrent()
 		{
-			if(queue.Count <= 0)
+			if(queue.Count <= 0){
 				return;
+			}
+
 			MsgBox currentDialog = queue.Dequeue();
 			currentDialog.Close();
 		}

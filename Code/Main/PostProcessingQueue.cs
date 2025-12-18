@@ -65,10 +65,11 @@ namespace Cupscale.Cupscale
 
         static bool AnyFilesLeft()
         {
-            if(IoUtils.GetAmountOfFiles(Paths.imgOutPath, true) > 0)
-                return true;
+            if(IoUtils.GetAmountOfFiles(Paths.imgOutPath, true) > 0){
+				return true;
+			}
 
-            return false;
+			return false;
         }
 
         public static string lastOutfile;

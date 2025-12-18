@@ -13,8 +13,9 @@
 # Mono auto generated files
 mono_crash.*
 
-# links
+# links & backup files
 *.lnk
+_bkp-*
 
 # embedded Python env
 CupscaleData/bin/

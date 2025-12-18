@@ -35,8 +35,9 @@ namespace Cupscale.Main
 			VideoUpscaleUI.Init(videoOutDir, videoLogBox, videoPathLabel, videoOutputFormat);
 			Program.mainForm = this;
 
-			if(Config.GetBool("startMaximized"))
+			if(Config.GetBool("startMaximized")){
 				WindowState = FormWindowState.Maximized;
+			}
 		}
 
 		private async void MainForm_Load(object sender, EventArgs e)
@@ -77,8 +78,9 @@ namespace Cupscale.Main
 
 			NvApi.Init();
 
-			if(OsUtils.IsUserAdministrator())
+			if(OsUtils.IsUserAdministrator()){
 				Program.ShowMessage("Cupscale is running as administrator.\nThis will break Drag-n-Drop functionality.", "Warning");
+			}
 
 			LoadEsrganOptions();
 			InitImplementations();
@@ -225,7 +227,9 @@ namespace Cupscale.Main
 		private void previewImg_DragEnter(object sender, DragEventArgs e)
 		{
 			if(e.Data.GetDataPresent(DataFormats.FileDrop)){ e.Effect = DragDropEffects.Copy; }
-			else e.Effect = DragDropEffects.None;
+			else {
+				e.Effect = DragDropEffects.None;
+			}
 		}
 
 		private void previewImg_DragDrop(object sender, DragEventArgs e)
@@ -254,7 +258,10 @@ namespace Cupscale.Main
 		private void previewImg_Zoomed(object sender, ImageBoxZoomEventArgs e)
 		{
 			if(previewImg.Image == null){ return; }
-			if(previewImg.Zoom < 25) previewImg.Zoom = 25;
+			if(previewImg.Zoom < 25){
+				previewImg.Zoom = 25;
+			}
+
 			if(previewImg.Zoom != lastZoom){
 				if(resetImageOnMove){ ResetToLastState(); }
 				lastZoom = previewImg.Zoom;
@@ -449,8 +456,9 @@ namespace Cupscale.Main
 					failed = true;
 				}
 			}
-			if(loadingBox != null)
+			if(loadingBox != null){
 				loadingBox.Close();
+			}
 		}
 
 		private async void upscaleBtn_Click(object sender, EventArgs e)

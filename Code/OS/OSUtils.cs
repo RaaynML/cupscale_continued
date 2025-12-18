@@ -31,9 +31,10 @@ namespace Cupscale.OS
             }
             finally
             {
-                if(user != null)
-                    user.Dispose();
-            }
+                if(user != null){
+					user.Dispose();
+				}
+			}
             return isAdmin;
         }
 
@@ -56,9 +57,10 @@ namespace Cupscale.OS
 
         public static void KillProcessTree(Process proc)
         {
-            if(proc != null)
-                KillProcessTree(proc.Id);
-        }
+            if(proc != null){
+				KillProcessTree(proc.Id);
+			}
+		}
 
         public static void KillProcessTree(int pid)
         {
@@ -68,9 +70,11 @@ namespace Cupscale.OS
                 ManagementObjectCollection processCollection = processSearcher.Get();
 
                 Process proc = Process.GetProcessById(pid);
-                if(!proc.HasExited) proc.Kill();
+                if(!proc.HasExited){
+					proc.Kill();
+				}
 
-                if(processCollection != null)
+				if(processCollection != null)
                 {
                     foreach (ManagementObject mo in processCollection)
                     {

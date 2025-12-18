@@ -19,17 +19,26 @@ namespace Cupscale.ImageUtils
     {
         public static Image GetImage(string path)
         {
-            if(Logger.doLogIo) Logger.Log("[ImgUtils] Reading Image from " + path);
-            using MemoryStream stream = new MemoryStream(File.ReadAllBytes(path));
+            if(Logger.doLogIo){
+				Logger.Log("[ImgUtils] Reading Image from " + path);
+			}
+
+			using MemoryStream stream = new MemoryStream(File.ReadAllBytes(path));
             Image img = Image.FromStream(stream);
-            if(Logger.doLogIo) Logger.Log("[OK]", true, true);
-            return img;
+            if(Logger.doLogIo){
+				Logger.Log("[OK]", true, true);
+			}
+
+			return img;
         }
 
         public static MagickImage GetMagickImage(string path, bool allowTgaFlip = false)
         {
-            if(Logger.doLogIo) Logger.Log("[ImgUtils] Reading MagickImage from " + path);
-            MagickImage image;
+            if(Logger.doLogIo){
+				Logger.Log("[ImgUtils] Reading MagickImage from " + path);
+			}
+
+			MagickImage image;
             if(Path.GetExtension(path).ToLower() == ".dds")
             {
                 try
@@ -59,10 +68,15 @@ namespace Cupscale.ImageUtils
             if(allowTgaFlip && Path.GetExtension(path).ToLower() == ".tga" && Config.GetBool("flipTga"))
             {
                 image.Flip();
-                if(Logger.doLogIo) Logger.Log("[Flipped TGA]", true, true);
-            }
-            if(Logger.doLogIo) Logger.Log("[OK]", true, true);
-            return image;
+                if(Logger.doLogIo){
+					Logger.Log("[Flipped TGA]", true, true);
+				}
+			}
+            if(Logger.doLogIo){
+				Logger.Log("[OK]", true, true);
+			}
+
+			return image;
         }
 
         public static MagickImage ConvertToMagickImage(Surface surface)
@@ -127,14 +141,16 @@ namespace Cupscale.ImageUtils
             foreach (string img in imgs)
             {
                 collection.Add(img);
-                if(deleteSourceImgs)
-                    File.Delete(img);
-            }
+                if(deleteSourceImgs){
+					File.Delete(img);
+				}
+			}
 
-            if(!vertically)
-                return (MagickImage)collection.AppendHorizontally();
-            else
-                return (MagickImage)collection.AppendVertically();
-        }
+            if(!vertically){
+				return (MagickImage)collection.AppendHorizontally();
+			} else {
+				return (MagickImage)collection.AppendVertically();
+			}
+		}
     }
 }

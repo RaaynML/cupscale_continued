@@ -84,8 +84,11 @@ namespace Cupscale.UI
             try
             {
                 await Upscale.Run(Paths.imgInPath, Paths.imgOutPath, mdl, false, Config.GetBool("alpha"), PreviewMode.None);
-                if(Program.canceled) return;
-                outImg = Upscale.GetOutputImg();
+                if(Program.canceled){
+					return;
+				}
+
+				outImg = Upscale.GetOutputImg();
                 Program.mainForm.SetProgress(100f, "Post-Processing...");
                 await Task.Delay(50);
                 await PostProcessing.PostprocessingSingle(outImg, false);
@@ -95,26 +98,33 @@ namespace Cupscale.UI
             catch (Exception e)
             {
                 Program.mainForm.SetProgress(0f, "Cancelled.");
-                if(Program.canceled)
-                    return;
-                if(e.StackTrace.Contains("Index"))
-                    Program.ShowMessage("The upscale process seems to have exited before completion!", "Error");
-                Logger.ErrorMessage("An error occured during upscaling:", e);
+                if(Program.canceled){
+					return;
+				}
+
+				if(e.StackTrace.Contains("Index")){
+					Program.ShowMessage("The upscale process seems to have exited before completion!", "Error");
+				}
+
+				Logger.ErrorMessage("An error occured during upscaling:", e);
             }
 
-            if(!Program.canceled)
-                Program.mainForm.SetProgress(0, $"Done - Upscaling took {(sw.ElapsedMilliseconds / 1000f).ToString("0.0")}s");
+            if(!Program.canceled){
+				Program.mainForm.SetProgress(0, $"Done - Upscaling took {(sw.ElapsedMilliseconds / 1000f).ToString("0.0")}s");
+			}
 
-            Program.mainForm.SetBusy(false);
+			Program.mainForm.SetBusy(false);
         }
 
         static void Cancel(string reason = "")
         {
-            if(string.IsNullOrWhiteSpace(reason))
-                Program.mainForm.SetProgress(0f, "Cancelled.");
-            else
-                Program.mainForm.SetProgress(0f, "Cancelled: " + reason);
-            string inputImgPath = Path.Combine(Paths.imgInPath, Path.GetFileName(Program.lastImgPath));
+            if(string.IsNullOrWhiteSpace(reason)){
+				Program.mainForm.SetProgress(0f, "Cancelled.");
+			} else {
+				Program.mainForm.SetProgress(0f, "Cancelled: " + reason);
+			}
+
+			string inputImgPath = Path.Combine(Paths.imgInPath, Path.GetFileName(Program.lastImgPath));
         }
 
         public static void TabSelected()
@@ -131,34 +141,40 @@ namespace Cupscale.UI
             {
                 bool valid = true;
 
-                if(NcnnUtils.IsDirNcnnModel(Program.currentModel1) || NcnnUtils.IsDirNcnnModel(Program.currentModel2))
-                    valid = false;  // NCNN models not compatible with pytorch
+                if(NcnnUtils.IsDirNcnnModel(Program.currentModel1) || NcnnUtils.IsDirNcnnModel(Program.currentModel2)){
+					valid = false;  // NCNN models not compatible with pytorch
+				}
 
-                if(!valid && showErrorMsgsIfInvalid)
+				if(!valid && showErrorMsgsIfInvalid)
                 {
                     Program.ShowMessage("Invalid model selection - You have selected one or more models that are not compatible with this implementation!", "Error");
                     return false;
                 }
 
-                if(model1.Enabled && !File.Exists(Program.currentModel1))
-                    valid = false;
-                if(model2.Enabled && !File.Exists(Program.currentModel2))
-                    valid = false;
+                if(model1.Enabled && !File.Exists(Program.currentModel1)){
+					valid = false;
+				}
 
-                if(!valid && showErrorMsgsIfInvalid)
-                    Program.ShowMessage("Invalid model selection.\nMake sure you have selected a model and that the file still exists.", "Error");
+				if(model2.Enabled && !File.Exists(Program.currentModel2)){
+					valid = false;
+				}
 
-                return valid;
+				if(!valid && showErrorMsgsIfInvalid){
+					Program.ShowMessage("Invalid model selection.\nMake sure you have selected a model and that the file still exists.", "Error");
+				}
+
+				return valid;
             }
 
             if(ncnn)
             {
                 bool valid = true;
 
-                if(!Program.mainForm.IsSingleModleMode())
-                    valid = false;
+                if(!Program.mainForm.IsSingleModleMode()){
+					valid = false;
+				}
 
-                if(!valid && showErrorMsgsIfInvalid)
+				if(!valid && showErrorMsgsIfInvalid)
                 {
                     Program.ShowMessage("Invalid model selection - NCNN does not support interpolation or chaining.", "Error");
                     return false;
@@ -188,10 +204,11 @@ namespace Cupscale.UI
 
         public static async void UpscalePreview(bool fullImage = false)
         {
-            if(!HasValidModelSelection())
-                return;
+            if(!HasValidModelSelection()){
+				return;
+			}
 
-            Upscale.currentMode = Upscale.UpscaleMode.Preview;
+			Upscale.currentMode = Upscale.UpscaleMode.Preview;
             Program.mainForm.SetBusy(true);
             Program.mainForm.SetProgress(2f, "Preparing...");
             Program.mainForm.resetState = new Cupscale.PreviewState(previewImg.Image, previewImg.Zoom, previewImg.AutoScrollPosition);
@@ -205,8 +222,10 @@ namespace Cupscale.UI
             if(fullImage)
             {
                 prevMode = PreviewUi.PreviewMode.FullImage;
-                if(!IoUtils.TryCopy(Paths.tempImgPath, Path.Combine(Paths.previewPath, "preview.png"), true)) return;
-            }
+                if(!IoUtils.TryCopy(Paths.tempImgPath, Path.Combine(Paths.previewPath, "preview.png"), true)){
+					return;
+				}
+			}
             else
             {
                 SaveCurrentCutout();
@@ -226,24 +245,33 @@ namespace Cupscale.UI
                 if(currentMode == MdlMode.Single)
                 {
                     string mdl1 = Program.currentModel1;
-                    if(string.IsNullOrWhiteSpace(mdl1)) return;
-                    mdl = new ModelData(mdl1, null, ModelData.ModelMode.Single);
+                    if(string.IsNullOrWhiteSpace(mdl1)){
+						return;
+					}
+
+					mdl = new ModelData(mdl1, null, ModelData.ModelMode.Single);
                 }
 
                 if(currentMode == MdlMode.Interp)
                 {
                     string mdl1 = Program.currentModel1;
                     string mdl2 = Program.currentModel2;
-                    if(string.IsNullOrWhiteSpace(mdl1) || string.IsNullOrWhiteSpace(mdl2)) return;
-                    mdl = new ModelData(mdl1, mdl2, ModelData.ModelMode.Interp, interpValue);
+                    if(string.IsNullOrWhiteSpace(mdl1) || string.IsNullOrWhiteSpace(mdl2)){
+						return;
+					}
+
+					mdl = new ModelData(mdl1, mdl2, ModelData.ModelMode.Interp, interpValue);
                 }
 
                 if(currentMode == MdlMode.Chain)
                 {
                     string mdl1 = Program.currentModel1;
                     string mdl2 = Program.currentModel2;
-                    if(string.IsNullOrWhiteSpace(mdl1) || string.IsNullOrWhiteSpace(mdl2)) return;
-                    mdl = new ModelData(mdl1, mdl2, ModelData.ModelMode.Chain);
+                    if(string.IsNullOrWhiteSpace(mdl1) || string.IsNullOrWhiteSpace(mdl2)){
+						return;
+					}
+
+					mdl = new ModelData(mdl1, mdl2, ModelData.ModelMode.Chain);
                 }
 
                 if(currentMode == MdlMode.Advanced)
@@ -254,18 +282,21 @@ namespace Cupscale.UI
 
             await Upscale.Run(Paths.previewPath, Paths.previewOutPath, mdl, false, alpha, prevMode);
 
-            if(!Program.canceled)
-                Program.mainForm.SetProgress(0, $"Done - Upscaling took {(sw.ElapsedMilliseconds / 1000f).ToString("0.0")}s");
-            
-            Program.mainForm.SetBusy(false);
+            if(!Program.canceled){
+				Program.mainForm.SetProgress(0, $"Done - Upscaling took {(sw.ElapsedMilliseconds / 1000f).ToString("0.0")}s");
+			}
+
+			Program.mainForm.SetBusy(false);
         }
 
         public static async Task ScalePreviewOutput()
         {
             if(ImageProcessing.postScaleMode == Upscale.ScaleMode.Percent && ImageProcessing.postScaleValue == 100)   // Skip if target scale is 100%)
-                return;
+{
+				return;
+			}
 
-            Program.mainForm.SetProgress(1f, "Resizing preview output...");
+			Program.mainForm.SetProgress(1f, "Resizing preview output...");
             await Task.Delay(1);
             MagickImage img = ImgUtils.GetMagickImage(Directory.GetFiles(Paths.previewOutPath, "*.png.*", SearchOption.AllDirectories)[0]);
             MagickImage magickImage = ImageProcessing.ResizeImagePost(img);
@@ -365,9 +396,10 @@ namespace Cupscale.UI
 
         public static void OpenLastOutputFolder()
         {
-            if(!string.IsNullOrWhiteSpace(Program.lastOutputDir))
-                Process.Start("explorer.exe", Program.lastOutputDir);
-        }
+            if(!string.IsNullOrWhiteSpace(Program.lastOutputDir)){
+				Process.Start("explorer.exe", Program.lastOutputDir);
+			}
+		}
 
         public static async Task LoadPatronListCsv(Control patronsLabel)
         {
@@ -398,19 +430,24 @@ namespace Cupscale.UI
                 {
                     string line = lines[i];
                     string[] values = line.Split(',');
-                    if(i == 0 || line.Length < 10 || values.Length < 5) continue;
-                    string name = values[0].Trim();
+                    if(i == 0 || line.Length < 10 || values.Length < 5){
+						continue;
+					}
+
+					string name = values[0].Trim();
                     string status = values[4].Trim();
                     string tier = values[9].Trim();
 
                     if(status.Contains("Active"))
                     {
-                        if(tier.Contains("Gold"))
-                            goldPatrons.Add(name.Split('(')[0].Trunc(30));
+                        if(tier.Contains("Gold")){
+							goldPatrons.Add(name.Split('(')[0].Trunc(30));
+						}
 
-                        if(tier.Contains("Silver"))
-                            silverPatrons.Add(name.Split('(')[0].Trunc(30));
-                    }
+						if(tier.Contains("Silver")){
+							silverPatrons.Add(name.Split('(')[0].Trunc(30));
+						}
+					}
                 }
 
                 Logger.Log($"Found {goldPatrons.Count} Gold Patrons, {silverPatrons.Count} Silver Patrons", true);
@@ -421,10 +458,11 @@ namespace Cupscale.UI
                 str += "\n\nSilver:\n";
                 str += string.Join(" - ", silverPatrons.Take(silverAmount));
 
-                if(silverPatrons.Count - silverAmount > 0)
-                    str += $"\n...and {silverPatrons.Count - silverAmount} more!";
+                if(silverPatrons.Count - silverAmount > 0){
+					str += $"\n...and {silverPatrons.Count - silverAmount} more!";
+				}
 
-                return str;
+				return str;
             }
             catch (Exception e)
             {

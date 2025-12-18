@@ -49,8 +49,9 @@ namespace Cupscale
 				return;
 			}
 
-			if(GetTrimmedExtension(file) == "gif")
+			if(GetTrimmedExtension(file) == "gif"){
 				format = Format.GIF;
+			}
 
 			string ext = Path.GetExtension(path).ToUpper().Replace(".", "");
 			if(format == Format.Png50 && ext != "PNG")
@@ -104,7 +105,10 @@ namespace Cupscale
 			img.Write(outPath);
 
 			if(outPath.ToLower() != path.ToLower()){
-				if(Logger.doLogIo) Logger.Log("[ImgProc] Deleting source file: " + path);
+				if(Logger.doLogIo){
+					Logger.Log("[ImgProc] Deleting source file: " + path);
+				}
+
 				File.Delete(path);
 			}
 		}
@@ -185,7 +189,10 @@ namespace Cupscale
 				Logger.Log("[ImgProc] Written image to " + outPath);
 			}
 			if(deleteSource && !inPathIsOutPath){
-				if(Logger.doLogIo) Logger.Log("[ImgProc] Deleting source file: " + path);
+				if(Logger.doLogIo){
+					Logger.Log("[ImgProc] Deleting source file: " + path);
+				}
+
 				File.Delete(path);
 			}
 			img.Dispose();
@@ -290,11 +297,13 @@ namespace Cupscale
 			await Task.Delay(1);
 			string outPath = GetOutPath(path, newExt, ExtMode.UseNew, "");
 
-			if(Upscale.currentMode == Upscale.UpscaleMode.Batch)
+			if(Upscale.currentMode == Upscale.UpscaleMode.Batch){
 				PostProcessingQueue.lastOutfile = outPath;
+			}
 
-			if(Upscale.currentMode == Upscale.UpscaleMode.Single || Upscale.currentMode == Upscale.UpscaleMode.Composition)
+			if(Upscale.currentMode == Upscale.UpscaleMode.Single || Upscale.currentMode == Upscale.UpscaleMode.Composition){
 				PreviewUi.lastOutfile = outPath;
+			}
 
 			if(magick)
 			{
@@ -304,7 +313,10 @@ namespace Cupscale
 
 			if(outPath.ToLower() != path.ToLower())
 			{
-				if(Logger.doLogIo) Logger.Log("[ImgProc] Deleting source file: " + path);
+				if(Logger.doLogIo){
+					Logger.Log("[ImgProc] Deleting source file: " + path);
+				}
+
 				File.Delete(path);
 			}
 		}
@@ -324,15 +336,20 @@ namespace Cupscale
 
 			await NvCompress.PngToDds(path, outPath);
 
-			if(Upscale.currentMode == Upscale.UpscaleMode.Batch)
+			if(Upscale.currentMode == Upscale.UpscaleMode.Batch){
 				PostProcessingQueue.lastOutfile = outPath;
+			}
 
-			if(Upscale.currentMode == Upscale.UpscaleMode.Single || Upscale.currentMode == Upscale.UpscaleMode.Composition)
+			if(Upscale.currentMode == Upscale.UpscaleMode.Single || Upscale.currentMode == Upscale.UpscaleMode.Composition){
 				PreviewUi.lastOutfile = outPath;
+			}
 
 			if(outPath.ToLower() != path.ToLower())
 			{
-				if(Logger.doLogIo) Logger.Log("[ImgProc] Deleting source file: " + path);
+				if(Logger.doLogIo){
+					Logger.Log("[ImgProc] Deleting source file: " + path);
+				}
+
 				File.Delete(path);
 			}
 		}
@@ -340,7 +357,9 @@ namespace Cupscale
 		public static MagickImage ResizeImagePre(MagickImage img)
 		{
 			if(preScaleMode == Upscale.ScaleMode.Percent && preScaleValue == 100)   // Skip if target scale is 100%
+{
 				return img;
+			}
 
 			img = ResizeImageAdvancedMagick(img, preScaleValue, preScaleMode, Filters.GetMagickFilter(preFilter), preOnlyDownscale);
 			Logger.Log("[ImgProc] ResizeImagePre: Resized to " + img.Width + "x" + img.Height);
@@ -350,7 +369,9 @@ namespace Cupscale
 		public static MagickImage ResizeImagePost(MagickImage img)
 		{
 			if(postScaleMode == Upscale.ScaleMode.Percent && postScaleValue == 100)   // Skip if target scale is 100%
+{
 				return img;
+			}
 
 			img = ResizeImageAdvancedMagick(img, postScaleValue, postScaleMode, Filters.GetMagickFilter(postFilter), postOnlyDownscale);
 			Logger.Log("[ImgProc] ResizeImagePost: Resized to " + img.Width + "x" + img.Height);
@@ -379,8 +400,10 @@ namespace Cupscale
 			bool useShorterOnW = (scaleMode == Upscale.ScaleMode.PixelsShorterSide && widthLonger);
 			if(useSquare || useHeight || useLongerOnH || useShorterOnW)
 			{
-				if(onlyDownscale && (img.Height <= scaleValue))
+				if(onlyDownscale && (img.Height <= scaleValue)){
 					return img;     // Return image without scaling
+				}
+
 				Logger.Log("[ImgProc] Scaling to " + scaleValue + "px height with filter " + filter + "...");
 				MagickGeometry geom = new MagickGeometry("x" + scaleValue);
 				img.Resize(geom);
@@ -392,8 +415,10 @@ namespace Cupscale
 			bool useShorterOnH = (scaleMode == Upscale.ScaleMode.PixelsShorterSide && heightLonger);
 			if(useWidth || useLongerOnW || useShorterOnH)
 			{
-				if(onlyDownscale && (img.Width <= scaleValue))
+				if(onlyDownscale && (img.Width <= scaleValue)){
 					return img;     // Return image without scaling
+				}
+
 				Logger.Log("[ImgProc] Scaling to " + scaleValue + "px width with filter " + filter + "...");
 				MagickGeometry geom = new MagickGeometry(scaleValue + "x");
 				img.Resize(geom);

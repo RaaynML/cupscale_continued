@@ -54,10 +54,11 @@ namespace Cupscale.UI
         {
             Program.mainForm.SetButtonText("Upscale Video");
 
-            if(string.IsNullOrWhiteSpace(currentInPath))
-                return;
+            if(string.IsNullOrWhiteSpace(currentInPath)){
+				return;
+			}
 
-            titleLabel.Text = "Loaded " + currentInPath.Wrap();
+			titleLabel.Text = "Loaded " + currentInPath.Wrap();
         }
 
         public static async Task Run(bool preprocess)
@@ -138,23 +139,32 @@ namespace Cupscale.UI
 
         static async Task CreateVideo()
         {
-            if(IoUtils.GetAmountOfFiles(Paths.framesOutPath, false) < 1) return;
+            if(IoUtils.GetAmountOfFiles(Paths.framesOutPath, false) < 1){
+				return;
+			}
 
-            if(outputFormatBox.Text == Upscale.VidExportMode.MP4.ToStringTitleCase())
-                outputFormat = Upscale.VidExportMode.MP4;
-            if(outputFormatBox.Text == Upscale.VidExportMode.GIF.ToStringTitleCase())
-                outputFormat = Upscale.VidExportMode.GIF;
-            if(outputFormatBox.Text == Upscale.VidExportMode.SameAsSource.ToStringTitleCase())
-                outputFormat = (Upscale.VidExportMode)Enum.Parse(typeof(Upscale.VidExportMode), Path.GetExtension(currentInPath).Replace(".", "").ToUpper());
+			if(outputFormatBox.Text == Upscale.VidExportMode.MP4.ToStringTitleCase()){
+				outputFormat = Upscale.VidExportMode.MP4;
+			}
 
-            if(outputFormat == Upscale.VidExportMode.MP4)
+			if(outputFormatBox.Text == Upscale.VidExportMode.GIF.ToStringTitleCase()){
+				outputFormat = Upscale.VidExportMode.GIF;
+			}
+
+			if(outputFormatBox.Text == Upscale.VidExportMode.SameAsSource.ToStringTitleCase()){
+				outputFormat = (Upscale.VidExportMode)Enum.Parse(typeof(Upscale.VidExportMode), Path.GetExtension(currentInPath).Replace(".", "").ToUpper());
+			}
+
+			if(outputFormat == Upscale.VidExportMode.MP4)
             {
                 DialogForm f = new DialogForm("Creating video from frames...", 300);
                 await Task.Delay(10);
                 await FFmpegCommands.FramesToMp4(Paths.framesOutPath, Config.GetBool("h265"), Config.GetInt("crf"), fps, "", false);
-                if(Config.GetBool("vidEnableAudio"))
-                    await FFmpegCommands.MergeAudio(Paths.framesOutPath + ".mp4", currentInPath);
-                f.Close();
+                if(Config.GetBool("vidEnableAudio")){
+					await FFmpegCommands.MergeAudio(Paths.framesOutPath + ".mp4", currentInPath);
+				}
+
+				f.Close();
             }
 
             if(outputFormat == Upscale.VidExportMode.GIF)
@@ -181,11 +191,12 @@ namespace Cupscale.UI
 
             try
             {
-                if(Upscale.overwriteMode == Upscale.Overwrite.No)
-                    outPath = Path.Combine(outDir.Text.Trim(), filename + "-" + Upscale.GetLastModelName() + ext);
-                else
-                    outPath = Path.Combine(outDir.Text.Trim(), Path.GetFileName(currentInPath));
-            }
+                if(Upscale.overwriteMode == Upscale.Overwrite.No){
+					outPath = Path.Combine(outDir.Text.Trim(), filename + "-" + Upscale.GetLastModelName() + ext);
+				} else {
+					outPath = Path.Combine(outDir.Text.Trim(), Path.GetFileName(currentInPath));
+				}
+			}
             catch (Exception e)
             {
                 Logger.Log($"Path Combine Error: {e.Message} - Path.Combine(outDir.Text.Trim() = {outDir.Text.Trim()}, filename = {filename} + \"-\" + Program.lastModelName = {Program.lastModelName} + ext = {ext}");
@@ -195,9 +206,11 @@ namespace Cupscale.UI
             Print("Moving output video to " + outPath + "...");
             try
             {
-                if(File.Exists(outPath))
-                    File.Delete(outPath);
-                File.Move(path, outPath);
+                if(File.Exists(outPath)){
+					File.Delete(outPath);
+				}
+
+				File.Move(path, outPath);
             }
             catch (Exception e)
             {
@@ -227,11 +240,13 @@ namespace Cupscale.UI
             {
                 logBox.Text = logBox.Text.Remove(logBox.Text.LastIndexOf(Environment.NewLine));
             }
-            if(string.IsNullOrWhiteSpace(logBox.Text))
-                logBox.Text += s;
-            else
-                logBox.Text += Environment.NewLine + s;
-            logBox.SelectionStart = logBox.Text.Length;
+            if(string.IsNullOrWhiteSpace(logBox.Text)){
+				logBox.Text += s;
+			} else {
+				logBox.Text += Environment.NewLine + s;
+			}
+
+			logBox.SelectionStart = logBox.Text.Length;
             logBox.ScrollToCaret();
         }
     }
